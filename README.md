@@ -1,5 +1,5 @@
 # BeProductiveBackend
-Main repo -> ```https://github.com/thakkarnetram/Productivity-App``` 
+Main repo -> https://github.com/thakkarnetram/Productivity-App
 <br>
 Features- <br>
 Register / Login and data is synced across devices with your mail . <br>
