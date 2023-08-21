@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reset Password - Be Productive</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .reset-form {
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 450px;
+      text-align: center;
+    }
+
+    .reset-form h1 {
+      margin-bottom: 20px;
+      color: #333333;
+    }
+
+    .reset-form label {
+      display: block;
+      margin-bottom: 5px;
+      color: #555555;
+    }
+
+    .reset-form input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #dddddd;
+      border-radius: 3px;
+      transition: border-color 0.3s ease-in-out;
+    }
+
+    .reset-form input:focus {
+      outline: none;
+      border-color: #007bff;
+    }
+
+    .reset-form button {
+      width: 100%;
+      padding: 10px;
+      background-color: #007bff;
+      color: #ffffff;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: background-color 0.3s ease-in-out;
+    }
+
+    .reset-form button:hover {
+      background-color: #0056b3;
+    }
+
+    .contact-developer {
+      margin-top: 20px;
+      color: #888888;
+    }
+
+    .show-password {
+      display: flex;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .show-password input {
+      margin-right: 1px;
+    }
+
+    #showpass {
+      font-size: .8rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="reset-form">
+    <h1>Reset Password</h1>
+    <form action="/auth/api/v1/reset/<%= userId %>/<%= token %>" method="POST">
+      <label for="newPassword">New Password</label>
+      <div class="show-password">
+        <input type="password" id="newPassword" name="newPassword" required>
+        <div>
+          <label for="showPassword" id="showpass">View</label>
+          <input type="checkbox" id="showPassword">
+        </div>
+      </div>
+      <button type="submit">Reset Password</button>
+    </form>
+    <div class="contact-developer">
+      <p>Contact Developer: <a href="mailto:beproductivecontact@gmail.com">beproductivecontact@gmail.com</a></p>
+    </div>
+  </div>
+
+  <script>
+    const showPasswordCheckbox = document.getElementById("showPassword");
+    const newPasswordInput = document.getElementById("newPassword");
+
+    showPasswordCheckbox.addEventListener("change", function () {
+      if (this.checked) {
+        newPasswordInput.type = "text";
+      } else {
+        newPasswordInput.type = "password";
+      }
+    });
+  </script>
+
+</body>
+
+</html>

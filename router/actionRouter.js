@@ -5,35 +5,37 @@ const authController = require('../controllers/authController');
 const router = express.Router();
 
 router
-  .route('/getNotes')
+  .route('/api/v1/notes')
   .get(authController.protect, actionController.getNotes);
 
 router
-  .route('/addNotes')
+  .route('/api/v1/notes/add')
   .post(authController.protect, actionController.addNotes);
 
 router
-  .route('/updateNotes/:_id')
+  .route('/api/v1/notes/update/:_id')
   .put(authController.protect, actionController.updateNotes);
 
 router
-  .route('/deleteNotes/:_id')
+  .route('/api/v1/notes/delete/:_id')
   .delete(authController.protect, actionController.deleteNotes);
 
 router
-  .route('/getTodos')
+  .route('/api/v1/todos')
   .get(authController.protect, actionController.getTodos);
 
 router
-  .route('/addTodos')
+  .route('/api/v1/todos/add')
   .post(authController.protect, actionController.addTodos);
 
 router
-  .route('/updateTodos/:_id')
+  .route('/api/v1/todos/update/:_id')
   .put(authController.protect, actionController.updateTodos);
 
 router
-  .route('/deleteTodos/:_id')
+  .route('/api/v1/todos/delete/:_id')
   .delete(authController.protect, actionController.deleteTodos);
+
+
 
 module.exports = router;

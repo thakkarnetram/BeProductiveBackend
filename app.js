@@ -2,6 +2,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const path = require("path");
+// const passport = require("passport");
 
 // Import your routes
 const authRoute = require("./router/authRoute");
@@ -14,6 +16,21 @@ const GlobalError = require("./controllers/errorController");
 require("dotenv").config();
 const app = express();
 
+// Middleware
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(cors());
+
+// Set the views directory and the view engine
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "ejs");
+
+// log routes the user hits
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.originalUrl}`);
+  next();
+});
+
 // Connect to MongoDB Atlas
 mongoose
   .connect(process.env.ATLAS_URI, {
@@ -23,9 +40,6 @@ mongoose
   .then(() => console.log("Connected to MongoDB Atlas"))
   .catch((error) => console.error("Error connecting to MongoDB Atlas:", error));
 
-// Middleware
-app.use(bodyParser.json());
-app.use(cors());
 // Routes
 app.use("/auth", authRoute);
 app.use("/user", actionRoute);

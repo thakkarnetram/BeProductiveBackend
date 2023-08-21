@@ -1,15 +1,18 @@
-const mongoose = require('mongoose');
-const shortid = require('shortid');
-const ToDo = require('../models/Todos');
+const mongoose = require("mongoose");
+const shortid = require("shortid");
+const ToDo = require("../models/Todos");
 
 const userSchema = new mongoose.Schema({
   _id: {
     type: String,
     default: shortid.generate,
   },
+  token: {
+    type: String,
+  },
   role: {
     type: String,
-    default: 'USER',
+    default: "USER",
   },
   name: {
     type: String,
@@ -28,8 +31,16 @@ const userSchema = new mongoose.Schema({
     type: String,
     require: true,
   },
+  isEmailVerified: {
+    type: Boolean,
+    default: false,
+  },
+  isGoogleAuth: {
+    type: Boolean,
+    default: false,
+  },
 });
 
-const User = mongoose.model('users', userSchema);
+const User = mongoose.model("users", userSchema);
 
 module.exports = User;
