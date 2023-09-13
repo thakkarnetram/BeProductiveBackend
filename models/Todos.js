@@ -12,7 +12,6 @@ const todoSchema = new mongoose.Schema({
   },
   todoDescription: {
     type: String,
-    required: true,
   },
   todoPriority: {
     type: String,

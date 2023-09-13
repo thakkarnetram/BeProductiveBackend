@@ -15,11 +15,6 @@ exports.getNotes = asyncErrorHandler(async (req, res, next) => {
 exports.addNotes = asyncErrorHandler(async (req, res, next) => {
   const {title, description} = req.body;
   const email = req.user.email;
-  if (!(title && description)) {
-    return res
-      .status(403)
-      .json({message: 'Title and Description cant be empty'});
-  }
   const newNote = new Note({
     title,
     description,
@@ -78,10 +73,10 @@ exports.getTodos = asyncErrorHandler(async (req, res, next) => {
 exports.addTodos = async (req, res, next) => {
   const {todoTitle, todoDescription, todoPriority, todoStatus} = req.body;
   const email = req.user.email;
-  if (!(todoTitle && todoDescription)) {
+  if (!(todoTitle)) {
     return res
       .status(403)
-      .send({message: 'Title and Description cant be empty'});
+      .send({message: 'Title cant be empty'});
   }
   const newTodo = new ToDo({
     todoTitle,

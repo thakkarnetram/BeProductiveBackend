@@ -8,7 +8,7 @@ exports.verifyEmail = async (email, token) => {
       pass: process.env.GMAIL_PASS,
     },
   });
-  const link = `http://localhost:8082/auth/api/v1/verify`;
+  const link = `http://192.168.1.20:8082/auth/api/v1/verify`;
   const mail = process.env.GMAIL_ID;
   const mailOptions = {
     from: process.env.GMAIL_ID,
@@ -18,7 +18,7 @@ exports.verifyEmail = async (email, token) => {
     html: `
       <h2>Hi ${email}</h2>
       <h3>Please Verify your mail </h3>
-      <p>Click <a href="${link}?email=${email}&token=${token}">here</a> to verify your email.</p>
+      <p>Click <a href="${link}?email=${email}">here</a> to verify your email.</p>
       <h4>Thank you . </h4>
       <h5>Contact Developer <a href="mailto:${mail}">${mail}</a> </h5>
       `,

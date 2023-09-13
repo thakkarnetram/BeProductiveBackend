@@ -91,7 +91,7 @@
 <body>
   <div class="reset-form">
     <h1>Reset Password</h1>
-    <form action="/auth/api/v1/reset/<%= userId %>/<%= token %>" method="POST">
+    <form action="/auth/api/v1/reset/<%= userId %>" method="POST">
       <label for="newPassword">New Password</label>
       <div class="show-password">
         <input type="password" id="newPassword" name="newPassword" required>

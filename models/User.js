@@ -7,9 +7,6 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: shortid.generate,
   },
-  token: {
-    type: String,
-  },
   role: {
     type: String,
     default: "USER",
