@@ -160,6 +160,7 @@ exports.verifyEmail = async (req, res) => {
 };
 
 exports.resetPasswordLink = async (req, res) => {
+<<<<<<< Updated upstream
     try {
         const {email} = req.body;
         if (!email) {
@@ -180,6 +181,28 @@ exports.resetPasswordLink = async (req, res) => {
             .status(500)
             .json({message: "An internal server error occurred"});
     }
+=======
+  try {
+    const {email} = req.body;
+    if (!email) {
+      return res.status(400).json({message: "Email not provided"});
+    }
+    const user = await User.findOne({email: email});
+    if (!user) {
+      return res.status(404).json({message: "User not found"});
+    }
+    const link = `http://192.168.1.20:8082/auth/api/v1/reset/${user._id}`;
+    await sendEmails.resetEmail(user.email, link);
+    return res
+        .status(200)
+        .json({message: `Password Reset Email Sent To ${email}`});
+  } catch (error) {
+    console.error("Error in resetPassword:", error);
+    return res
+        .status(500)
+        .json({message: "An internal server error occurred"});
+  }
+>>>>>>> Stashed changes
 };
 
 exports.resetPassword = async (req, res) => {
