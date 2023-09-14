@@ -32,10 +32,6 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  isGoogleAuth: {
-    type: Boolean,
-    default: false,
-  },
 });
 
 const User = mongoose.model("users", userSchema);
