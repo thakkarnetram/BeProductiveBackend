@@ -310,11 +310,9 @@ exports.protect = async (req, res, next) => {
             jwtToken,
             process.env.SECRET_KEY
         );
-        console.log("DECODED TOKEN " + JSON.stringify(decodedToken));
 
         // Check if user exists
         const user = await User.findOne({email: decodedToken.email});
-        console.log("User found? " + user.email);
 
         if (!user) {
             return res
