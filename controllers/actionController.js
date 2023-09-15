@@ -1,9 +1,10 @@
-// I
-// mports
+// Imports
+const User = require("../models/User")
 const Note = require('../models/Notes');
 const ToDo = require('../models/Todos');
 const Workspace = require("../models/Workspace");
 const Channel = require("../models/Channel")
+const Message = require("../models/Message");
 const asyncErrorHandler = require('../utils/AsyncErrorHandler');
 const {use} = require("bcrypt/promises");
 
@@ -231,7 +232,7 @@ exports.getChannelById = asyncErrorHandler(async (req, res, next) => {
             return res.status(404).json({message: "Channel not Found"})
         }
         if (findChannel.admin !== userId) {
-            return res.status(403).json({ message: "Permission denied " });
+            return res.status(403).json({message: "Permission denied "});
         }
         return res.status(200).json(findChannel)
 
@@ -248,14 +249,13 @@ exports.createChannel = asyncErrorHandler(async (req, res, next) => {
     if (!channelName) {
         return res.status(400).json({message: "Channel name is required"});
     }
-
     try {
         const workspace = await Workspace.findById({_id: req.query._id});
         if (!workspace) {
             return res.status(404).json({message: "No workspace found with Id"});
         }
         if (workspace.admin !== userId) {
-            return res.status(403).json({ message: "Permission denied "});
+            return res.status(403).json({message: "Permission denied "});
         }
         // Create a new channel based on the request body
         const newChannel = new Channel({
@@ -272,3 +272,38 @@ exports.createChannel = asyncErrorHandler(async (req, res, next) => {
         return res.status(500).json({message: "Internal Server Error"});
     }
 });
+
+// TODO UPDATE CHANNEL NAME & DELETE CHANNEL NAME
+
+// MESSAGE SECTION
+exports.sendMessage = asyncErrorHandler(async (req, res, next) => {
+    const userId = req.user._id;
+    const {message} = req.body;
+    const channelId = req.query._id;
+    if (!userId) {
+        return res.status(400).json({message: "User Id Missing"})
+    }
+    if (!message){
+        return res.status(400).json({message:"Message cannot be empty"})
+    }
+    try {
+        const Channel = await Channel.findById(channelId);
+        const UserExists = await User.findById(userId);
+        if (!Channel) {
+            return res.status(404).json({message:"No channel found with given ID"})
+        }
+        if (!UserExists){
+            return res.status(404).json({message:"No user found with given ID"})
+        }
+        const newMessage = new Message({
+            message,
+            sentBy:userId,
+            channel:channelId,
+        })
+        await newMessage.save();
+        return res.status(200).json(newMessage)
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({message: "Internal Server Error"})
+    }
+})
