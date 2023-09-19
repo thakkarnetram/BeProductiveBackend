@@ -142,9 +142,10 @@ exports.getWorkSpaces = asyncErrorHandler(async (req, res, next) => {
     // find all workspaces
     try {
         const workspaces = await Workspace.find({admin: userId});
-        if (!workspaces) {
-            return res.status(404).json({message: "No WorkSpaces found ! Create One "})
-        } else {
+        if (workspaces.length === 0) {
+            return res.status(404).json({ message: "No WorkSpaces found ! Create One "})
+        }
+        if (workspaces){
             return res.status(200).json(workspaces)
         }
     } catch (e) {
