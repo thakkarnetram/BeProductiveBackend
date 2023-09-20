@@ -154,12 +154,31 @@ exports.getWorkSpaces = asyncErrorHandler(async (req, res, next) => {
     }
 })
 
+exports.getLatestSpace = asyncErrorHandler(async (req, res, next) => {
+    const userId = req.user._id;
+    // Find the latest workspace for the specific user
+    try {
+        const latestWorkspace = await Workspace.find({ admin: userId })
+            .sort({ createdAt: -1 }) // Sort by creation date in descending order to get the latest
+            .limit(2); // Limit the result to one workspace (the latest)
+
+        if (!latestWorkspace) {
+            return res.status(404).json({ message: "No WorkSpace found for this user. Create one." });
+        }
+
+        return res.status(200).json(latestWorkspace);
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+});
+
 exports.createWorkSpace = asyncErrorHandler(async (req, res, next) => {
     const userId = req.user._id;
     const {workspace, projectName} = req.body;
 
-    if (!workspace) {
-        return res.status(400).json({message: "Work Space name cannot be empty"});
+    if (!workspace && !projectName) {
+        return res.status(400).json({message: "Workspace & Projectname name cannot be empty"});
     }
 
     try {
@@ -243,6 +262,25 @@ exports.getChannelById = asyncErrorHandler(async (req, res, next) => {
     }
 })
 
+exports.getLatestChannel = asyncErrorHandler(async (req, res, next) => {
+    const userId = req.user._id;
+    // Find the latest workspace for the specific user
+    try {
+        const latestChannel = await Channel.find({ admin: userId })
+            .sort({ createdAt: -1 }) // Sort by creation date in descending order to get the latest
+            .limit(2); // Limit the result to one workspace (the latest)
+
+        if (!latestChannel) {
+            return res.status(404).json({ message: "No Channel found" });
+        }
+
+        return res.status(200).json(latestChannel);
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+});
+
 exports.createChannel = asyncErrorHandler(async (req, res, next) => {
     const userId = req.user._id;
     const {channelName} = req.body;
@@ -251,7 +289,7 @@ exports.createChannel = asyncErrorHandler(async (req, res, next) => {
         return res.status(400).json({message: "Channel name is required"});
     }
     try {
-        const workspace = await Workspace.findById({_id: req.query._id});
+        const workspace = await Workspace.findById({_id: req.params._id});
         if (!workspace) {
             return res.status(404).json({message: "No workspace found with Id"});
         }
@@ -265,7 +303,7 @@ exports.createChannel = asyncErrorHandler(async (req, res, next) => {
             admin: userId
         });
         await newChannel.save();
-        workspace.channels.push({_id: newChannel._id, channelName: newChannel.channelName});
+        workspace.channels.push({ _id: newChannel._id, channelName: newChannel.channelName });
         await workspace.save();
         return res.status(201).json({message: "Channel Created", newChannel});
     } catch (e) {

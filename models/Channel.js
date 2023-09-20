@@ -32,7 +32,11 @@ const channelSchema = new mongoose.Schema({
                 default: Date.now
             }
         }
-    ]
+    ],
+    createdAt:{
+        type:Date,
+        default:Date.now
+    }
 })
 
 const Channel = mongoose.model("channels", channelSchema);

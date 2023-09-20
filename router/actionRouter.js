@@ -37,6 +37,9 @@ router
     .route("/api/v1/workspaces")
     .get(authController.protect, actionController.getWorkSpaces)
 router
+    .route("/api/v1/workspace/latest")
+    .get(authController.protect,actionController.getLatestSpace)
+router
     .route('/api/v1/workspace/add')
     .post(authController.protect, actionController.createWorkSpace)
 
@@ -49,7 +52,10 @@ router
     .route("/api/v1/channel")
     .get(authController.protect,actionController.getChannelById)
 router
-    .route("/api/v1/workspaces/channel/add/:_id")
+    .route("/api/v1/channel/latest")
+    .get(authController.protect,actionController.getLatestChannel)
+router
+    .route("/api/v1/channel/add/:_id")
     .post(authController.protect, actionController.createChannel)
 
 module.exports = router;
