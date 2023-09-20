@@ -40,6 +40,9 @@ router
     .route("/api/v1/workspace/latest")
     .get(authController.protect,actionController.getLatestSpace)
 router
+    .route("/api/v1/workspace/:_id")
+    .get(authController.protect,actionController.getWorkSpaceById)
+router
     .route('/api/v1/workspace/add')
     .post(authController.protect, actionController.createWorkSpace)
 

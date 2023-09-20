@@ -154,6 +154,28 @@ exports.getWorkSpaces = asyncErrorHandler(async (req, res, next) => {
     }
 })
 
+exports.getWorkSpaceById = asyncErrorHandler(async  (req,res,next)=>{
+    const userId = req.user._id;
+    const spaceId = req.params._id;
+    if (!userId) {
+        return res.status(400).json({message: "User ID not found"})
+    }
+    try {
+        const findSpace = await Workspace.findById({_id:spaceId})
+        if (!findSpace) {
+            return res.status(404).json({message: "Workspace not Found"})
+        }
+        if (findSpace.admin !== userId) {
+            return res.status(403).json({message: "Permission denied "});
+        }
+        return res.status(200).json(findSpace)
+
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({message: "Internal Server Error"})
+    }
+})
+
 exports.getLatestSpace = asyncErrorHandler(async (req, res, next) => {
     const userId = req.user._id;
     // Find the latest workspace for the specific user
@@ -197,7 +219,7 @@ exports.createWorkSpace = asyncErrorHandler(async (req, res, next) => {
 
         // Save the new workspace
         const savedWorkspace = await newWorkspace.save();
-
+        // TODO Before creating channel for the specific space need to make sure we dont save "" , instead create a general channel
         // Create a default channel using the projectName
         const newChannel = new Channel({
             channelName: projectName,
