@@ -264,7 +264,7 @@ exports.getChannels = asyncErrorHandler(async (req, res, next) => {
 
 exports.getChannelById = asyncErrorHandler(async (req, res, next) => {
     const userId = req.user._id;
-    const channelId = req.query._id;
+    const channelId = req.params._id;
     if (!userId) {
         return res.status(400).json({message: "User ID not found"})
     }

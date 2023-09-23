@@ -10,10 +10,6 @@ const messageSchema = new mongoose.Schema({
         type: String,
         ref: "users"
     },
-    channel: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "channels"
-    },
     sentAt: {
         type: Date,
         default: Date.now

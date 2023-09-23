@@ -52,7 +52,7 @@ router
     .route("/api/v1/channels")
     .get(authController.protect, actionController.getChannels)
 router
-    .route("/api/v1/channel")
+    .route("/api/v1/channel/:_id")
     .get(authController.protect,actionController.getChannelById)
 router
     .route("/api/v1/channel/latest")
