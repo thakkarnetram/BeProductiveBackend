@@ -13,6 +13,10 @@ const messageSchema = new mongoose.Schema({
     sentAt: {
         type: Date,
         default: Date.now
+    },
+    channel:{
+        type:String,
+        ref:"channels"
     }
 })
 
