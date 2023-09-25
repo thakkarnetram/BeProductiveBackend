@@ -1,6 +1,7 @@
 const express = require('express');
 const actionController = require('../controllers/actionController');
 const authController = require('../controllers/authController');
+const { io } = require('../app');
 
 const router = express.Router();
 
@@ -61,4 +62,8 @@ router
     .route("/api/v1/channel/add/:_id")
     .post(authController.protect, actionController.createChannel)
 
+// // MESSAGES
+// router
+//     .route("/api/v1/message/:_id")
+//     .post(authController.protect,actionController.sendMessage)
 module.exports = router;
