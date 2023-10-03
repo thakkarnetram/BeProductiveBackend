@@ -7,6 +7,7 @@ const Channel = require("../models/Channel")
 const Message = require("../models/Message");
 const asyncErrorHandler = require('../utils/AsyncErrorHandler');
 const {use} = require("bcrypt/promises");
+const Feedback = require("../models/feedback");
 
 //  NOTES SECTION
 exports.getNotes = asyncErrorHandler(async (req, res, next) => {
@@ -368,3 +369,26 @@ exports.sendMessage = asyncErrorHandler(async (req, res, next) => {
         return res.status(500).json({message: "Internal Server Error"})
     }
 })
+
+// FEEDBACK SECTION
+exports.addFeedback = asyncErrorHandler(async (req, res, next) => {
+    const userId = req.user._id;
+    const { feedbackMessage } = req.body;
+
+    if (!(feedbackMessage)) {
+        return res
+            .status(403)
+            .send({message: 'Feedback message cant be empty'});
+    }
+
+    const feedback = new Feedback({
+        feedback: feedbackMessage,
+        userId
+    });
+
+    feedback
+        .save()
+        .then(() =>
+            res.status(201).json({message: `Feedback added`, feedback}),
+        );
+});
