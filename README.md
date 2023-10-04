@@ -5,7 +5,6 @@ Features<br>
 1- <b> Productive Space </b><br>
   i  - Create Notes <br>
   ii - Create Todos <br>
-  <hr>
 2- <b> Work Space </b> <br>
   i   - Create Workspaces to collab with people  <br> 
   ii  - Create channels in it and interact on various topics [Implementation of Real-Time Chatting is Under Development ]  <br>
