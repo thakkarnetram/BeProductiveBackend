@@ -17,3 +17,6 @@ Features<br>
   - Node js (Backend) <br>
   - Database (Mongo)<br>
 <br>
+<hr>
+<h3><a href="./CONTRIBUTING.md"># For Collaborating in this Project </a></h3>
+<hr>
