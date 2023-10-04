@@ -5,17 +5,18 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const path = require("path");
-const setupSocket = require("./utils/socket")
+const setupSocket = require("./src/utils/socket")
 const http = require("http")
 // const passport = require("passport");
 
 // Import your routes
-const authRoute = require("./router/authRoute");
-const actionRoute = require("./router/actionRouter");
+const authRoute = require("./src/router/authRoute");
+const actionRoute = require("./src/router/actionRouter");
+const pingRoute = require("./src/router/pingRoute")
 
 // Error handlers
-const CustomError = require("./utils/customError");
-const GlobalError = require("./controllers/errorController");
+const CustomError = require("./src/utils/customError");
+const GlobalError = require("./src/controllers/errorController");
 
 // Socket connection
 const server = http.createServer(app);
@@ -47,6 +48,7 @@ mongoose
 // Routes
 app.use("/auth", authRoute);
 app.use("/user", actionRoute);
+app.use("/",pingRoute);
 app.all("*", (req, res, next) => {
     // res.status(404).json({
     //   status: 'fail',
