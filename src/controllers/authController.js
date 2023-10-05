@@ -6,6 +6,15 @@ const nodemailer = require("nodemailer");
 const sendEmails = require("../utils/emailSender");
 const {sign} = require("jsonwebtoken");
 
+exports.signToken = (email) => {
+    return jwt.sign(
+        {
+            email,
+        },
+        process.env.SECRET_KEY
+    );
+};
+
 const signToken = (email) => {
     return jwt.sign(
         {
@@ -50,7 +59,8 @@ const signToken = (email) => {
 
 exports.signup = async (req, res) => {
     try {
-        const {name, username, email, password} = req.body;
+        console.log(req.body + " TEST CASE ")
+        const { name, username, email, password} = req.body;
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const strongPasswordRegex =
             /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
@@ -85,7 +95,6 @@ exports.signup = async (req, res) => {
         await newUser.save();
         // Send verification email
         await sendEmails.verifyEmail(email);
-
         return res.status(201).json({
             message: "User Created! Please check your email to verify.",
             user: newUser,
