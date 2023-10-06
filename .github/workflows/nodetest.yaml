@@ -22,11 +22,11 @@ jobs:
           node-version: ${{matrix.node-version}}
           cache: 'npm'
 
-      - name: Install env-cmd
-        run: npm install -g env-cmd
-
       - name: Delete node_modules
         run: rm -rf node_modules
+
+      - name: Install env-cmd
+        run: npm install -g env-cmd
 
       - run: npm ci
       - run: npm run build --if-present
