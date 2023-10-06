@@ -66,4 +66,10 @@ router
 // router
 //     .route("/api/v1/message/:_id")
 //     .post(authController.protect,actionController.sendMessage)
+
+//FEEDBACK
+router
+    .route("/api/v1/feedback")
+    .post(authController.protect, actionController.addFeedback)
+    
 module.exports = router;
