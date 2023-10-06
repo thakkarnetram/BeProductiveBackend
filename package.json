@@ -6,9 +6,11 @@
   "scripts": {
     "start": "env-cmd ./config/env.dev nodemon server.js",
     "dev": "env-cmd ./config/env.dev nodemon server.js",
-    "test": "env-cmd ./config/env.test jest  "
+    "test": "env-cmd ./config/env.test jest --watchAll --runInBand"
   },
   "jest": {
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.jsx?$",
+    "moduleFileExtensions": ["js", "jsx", "json", "node"],
     "testEnvironment": "node",
     "coveragePathIgnorePatterns": ["/node_modules/"],
     "testEnvironmentOptions": {
@@ -26,10 +28,10 @@
     "dotenv": "^16.3.0",
     "ejs": "^3.1.9",
     "env": "^0.0.2",
-    "env-cmd": "^10.1.0",
     "express": "^4.18.2",
     "firebase-admin": "^11.10.1",
     "jest-environment-node": "^29.7.0",
+    "jest-runner": "^29.7.0",
     "jsonwebtoken": "^9.0.1",
     "moment-timezone": "^0.5.43",
     "mongodb": "^6.1.0",

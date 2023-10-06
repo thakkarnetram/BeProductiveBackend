@@ -1,4 +1,6 @@
 const nodemailer = require("nodemailer");
+const constants  = require("../constants/constants")
+const ROOT_URL = constants.ROOT_URL;
 
 exports.verifyEmail = async (email, token) => {
   let transporter = nodemailer.createTransport({
@@ -8,7 +10,7 @@ exports.verifyEmail = async (email, token) => {
       pass: process.env.GMAIL_PASS,
     },
   });
-  const link = `http://192.168.1.20:8082/auth/api/v1/verify`;
+  const link = `${ROOT_URL}/auth/api/v1/verify`;
   const mail = process.env.GMAIL_ID;
   const mailOptions = {
     from: process.env.GMAIL_ID,

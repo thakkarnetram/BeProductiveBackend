@@ -5,6 +5,8 @@ const util = require("util");
 const nodemailer = require("nodemailer");
 const sendEmails = require("../utils/emailSender");
 const {sign} = require("jsonwebtoken");
+const constants  = require("../constants/constants")
+const ROOT_URL = constants.ROOT_URL;
 
 exports.signToken = (email) => {
     return jwt.sign(
@@ -30,7 +32,6 @@ const signToken = (email) => {
 //     if (!token) {
 //       return res.status(404).json({ message: "No token found" });
 //     }
-
 //     console.log("Received token:", token);
 
 //     const googleToken = await admin.auth().verifyIdToken(token);
@@ -59,7 +60,6 @@ const signToken = (email) => {
 
 exports.signup = async (req, res) => {
     try {
-        console.log(req.body + " TEST CASE ")
         const { name, username, email, password} = req.body;
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const strongPasswordRegex =
@@ -107,43 +107,42 @@ exports.signup = async (req, res) => {
 
 exports.login = async (req, res) => {
     try {
-        //inputs
-        const {email, password} = req.body;
-        //regex
+        // Inputs
+        const { email, password } = req.body;
+        // Regex
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        //validation
+        // Validation
         if (!(email && password)) {
-            return res
-                .status(400)
-                .json({message: "Email & Password cannot be empty"});
+            return res.status(400).json({ message: "Email & Password cannot be empty" });
         } else if (!emailRegex.test(email)) {
-            return res.status(400).json({message: "Invalid Email format"});
+            return res.status(400).json({ message: "Invalid Email format" });
         }
-        // finding the user from db
-        const user = await User.findOne({email});
-        //if user verified then proceed
-        if (user.isEmailVerified === false) {
-            return res.status(401).json({message: "User Not Verified"});
-        }
-        if (user && (await bcrypt.compare(password, user.password))) {
-            // returning the token
-            user.token = signToken(user.email) ;
-            // rewrite logic cause token is not being sent
-            return res.status(200).json({message: "Login Successful",token:user.token});
-        }
-        // invalid password check
-        if (password !== user.password) {
-            return res.status(401).json({message: "Invalid password"});
-        }
-        // if nothing matches return 401
+        // Finding the user from the database
+        const user = await User.findOne({ email });
+        // If user is not found, return 401
         if (!user) {
-            return res.status(401).json({message: "Invalid Login Credentials"});
+            return res.status(401).json({ message: "Invalid Login Credentials" });
+        }
+        // If user is not verified, return 401
+        if (!user.isEmailVerified) {
+            return res.status(401).json({ message: "User Not Verified" });
+        }
+        // Compare passwords using bcrypt
+        const passwordsMatch = await bcrypt.compare(password, user.password);
+        if (passwordsMatch) {
+            // Returning the token
+            const token = signToken(user.email);
+            return res.status(200).json({ message: "Login Successful", token });
+        } else {
+            // Invalid password
+            return res.status(401).json({ message: "Invalid password" });
         }
     } catch (error) {
-        // handling internal server error
-        res.status(500).json({message: "Internal Server Error"});
+        // Handling internal server error
+        res.status(500).json({ message: "Internal Server Error" });
     }
 };
+
 
 exports.verifyEmail = async (req, res) => {
     const {email} = req.query;
@@ -178,7 +177,7 @@ exports.resetPasswordLink = async (req, res) => {
         if (!user) {
             return res.status(404).json({message: "User not found"});
         }
-        const link = `http://192.168.1.20:8082/auth/api/v1/reset/${user._id}`;
+        const link = `${ROOT_URL}/auth/api/v1/reset/${user._id}`;
         await sendEmails.resetEmail(user.email, link);
         return res
             .status(200)
@@ -331,7 +330,7 @@ exports.protect = async (req, res, next) => {
 
         // Attach the user information to the request object for later use
         req.user = user;
-        console.log("REQ USER: " + JSON.stringify(req.user));
+        console.log(JSON.stringify(req.user));
 
         // Continue to the next middleware
         next();
