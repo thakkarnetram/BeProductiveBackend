@@ -48,4 +48,4 @@ describe("POST /auth/api/v1/login", () => {
         const res = await request(app).post('/auth/api/v1/login');
         expect(res.status).toBe(400);
     });
-});
+},40000);

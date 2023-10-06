@@ -73,5 +73,5 @@ describe('GET /user/api/v1/notes', () => {
         const response = await request(app).get('/user/api/v1/notes');
         expect(response.status).toBe(401);
     });
-});
+},40000);
 

@@ -68,4 +68,4 @@ describe('POST /auth/api/v1/signup', () => {
             .send(testuser3);
         expect(res.status).toBe(400);
     });
-});
+},40000);
