@@ -35,7 +35,7 @@ const testuser3 = {
 
 beforeAll(async () => {
     await User.deleteMany({})
-})
+},15000)
 
 // Sign Up TEST
 describe('POST /auth/api/v1/signup', () => {
@@ -68,4 +68,4 @@ describe('POST /auth/api/v1/signup', () => {
             .send(testuser3);
         expect(res.status).toBe(400);
     });
-},40000);
+});

@@ -14,6 +14,7 @@ const loginUserTest = {
     email: "loginuser1@gmail.com",
     password: "Test@12345"
 }
+
 beforeAll(async () => {
     await User.deleteMany({})
     const hashedPassword = await bcrypt.hash(loginUser.password, 10);
@@ -23,7 +24,7 @@ beforeAll(async () => {
     });
     await saveUser.save()
     const updatedUser = await User.findOneAndUpdate({email: loginUser.email}, {isEmailVerified: true})
-})
+},15000)
 
 
 // Login TEST
@@ -48,4 +49,4 @@ describe("POST /auth/api/v1/login", () => {
         const res = await request(app).post('/auth/api/v1/login');
         expect(res.status).toBe(400);
     });
-},40000);
+});

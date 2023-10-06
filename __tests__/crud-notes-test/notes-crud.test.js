@@ -51,7 +51,7 @@ beforeAll(async () => {
     });
     await saveUser.save()
     const updatedUser = await User.findOneAndUpdate({email: testuser4.email}, {isEmailVerified: true})
-})
+},15000)
 
 // Notes TEST [ CRUD Operations ]
 describe('GET /user/api/v1/notes', () => {
@@ -73,5 +73,5 @@ describe('GET /user/api/v1/notes', () => {
         const response = await request(app).get('/user/api/v1/notes');
         expect(response.status).toBe(401);
     });
-},40000);
+});
 
