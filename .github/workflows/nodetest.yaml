@@ -1,4 +1,4 @@
-name : Node.js CI
+name: Node.js CI
 
 on:
   push:
@@ -8,21 +8,23 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
-        node-version: [18.18.0]
+        node-version: [18.x]
 
     steps:
       - uses: actions/checkout@v2
+
       - name: Use Node.js ${{matrix.node-version}}
         uses: actions/setup-node@v2
         with:
           node-version: ${{matrix.node-version}}
           cache: 'npm'
-    
+
+      - name: Install env-cmd
+        run: npm install -g env-cmd
+
       - name: Delete node_modules
         run: rm -rf node_modules
 
