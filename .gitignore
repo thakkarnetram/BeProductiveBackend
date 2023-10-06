@@ -1,5 +1,6 @@
 *.env
 /.env.dev
+/.env.test
 config/secret.json
 # dependencies
 node_modules
