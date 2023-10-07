@@ -146,10 +146,9 @@ exports.login = async (req, res) => {
 
 exports.verifyEmail = async (req, res) => {
     const {email} = req.query;
-    if (!(email)) {
-        res.status(401).json({message: "Email  not found"});
+    if (!email) {
+        return res.status(401).json({message: "Email not found"});
     }
-    // verify jwt
     try {
         const user = await User.findOneAndUpdate(
             {email},
@@ -159,11 +158,11 @@ exports.verifyEmail = async (req, res) => {
             return res.status(404).json({message: "User not found"});
         }
         if (user) {
-            res.render("verified.ejs");
+            return res.status(200).render("verified.ejs");
         }
     } catch (error) {
         console.log("error", error);
-        return res.status(500).json({message: "Internal Server Error"});
+        return res.status(500).json({message: "Internal Server Error" , error});
     }
 };
 
@@ -194,7 +193,7 @@ exports.resetPassword = async (req, res) => {
     try {
         const user = await User.findById(req.params._id);
         if (!user) {
-            return res.status(401).json({message: "user not found"});
+            return res.status(404).json({message: "user not found"});
         }
         // Render the ResetPasswordPage.ejs template with userId and token
         res.render("reset.ejs", {
@@ -208,25 +207,29 @@ exports.resetPassword = async (req, res) => {
 
 exports.handlePasswordReset = async (req, res) => {
     try {
+        console.log(req.body);  // Log the entire request body
         const user = await User.findById(req.params._id);
         if (!user) {
-            return res.status(401).json({message: "user not found"});
+            return res.status(401).json({ message: "user not found" });
         }
-        const newPassword = req.body.newPassword; // Extract password from request body
-        const hash = await bcrypt.hash(newPassword, 10);
+        const newPassword = req.body.newPassword;
+        // Check if newPassword is a non-empty string
+        if (!newPassword) {
+            return res.status(401).json({ message: "Provide a valid password" });
+        }
         const strongPasswordRegex =
             /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
 
-        if (!newPassword) {
-            return res.status(401).json({message: "Provide a password"});
-        } else if (!strongPasswordRegex.test(newPassword)) {
-            return res.status(401).json({message: "Pass must be 6 chars"});
+        // Check if newPassword meets the strong password requirements
+        if (!strongPasswordRegex.test(newPassword.trim())) {
+            return res.status(401).json({ message: "Password must be 6 chars and meet requirements" });
         }
-        user.password = hash;
+        user.password = await bcrypt.hash(newPassword, 10);
         await user.save();
         // Redirect to a success page or display a success message
         return res.render("success.ejs");
     } catch (error) {
+        console.log(error);
         return res.status(500).render("fail.ejs");
     }
 };

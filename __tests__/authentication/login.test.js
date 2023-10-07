@@ -62,7 +62,7 @@ describe("POST /auth/api/v1/login", () => {
                 .post("/auth/api/v1/login")
                 .set(headers)
                 .send(loginUserTest);
-            console.log(response.body); // Log the response body
+            // console.log(response.body);  Log the response body
             expect(response.statusCode).toBe(200);
         } catch (error) {
             console.log("Error during login test:", error);

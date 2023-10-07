@@ -58,11 +58,11 @@ describe('GET /user/api/v1/notes', () => {
     it('should return notes', async () => {
         // Get a valid JWT token
         const token = authController.signToken(testuser4.email, process.env.SECRET_KEY);
-        console.log(token)
+        // console.log(token)
         const response = await request(app)
             .get('/user/api/v1/notes')
             .set('Authorization', `Bearer ${token}`);
-        console.log(response.body)
+        // console.log(response.body)
         // Assertions
         expect(response.status).toBe(200);
         expect(response.body).toBeInstanceOf(Array);

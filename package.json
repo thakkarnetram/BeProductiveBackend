@@ -9,6 +9,7 @@
     "test": "cross-env $(cat .env.test | xargs) jest --runInBand --detectOpenHandles"
   },
   "jest": {
+    "collectCoverage": true,
     "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.jsx?$",
     "moduleFileExtensions": [
       "js",

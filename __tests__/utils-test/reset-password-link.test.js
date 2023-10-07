@@ -37,37 +37,40 @@ const testuser5 = {
     email: "testuser5@gmail.com",
     password: "Test@12345"
 }
-describe('GET /auth/api/v1/verify',() => {
-    test("Should Return 401 If Email Is Not Provided ", async () => {
+const testuser6 = {}
+const testuser7 = {
+    email: "testuser7@gmail.com"
+}
+describe('POST /auth/api/v1/reset', () => {
+    test("Should Return 400 Email Not Provided ", async () => {
         const headers = {
-            "Content-Type":"application/json"
+            "Content-Type": "application/json"
         }
         const response = await request(app)
-            .get('/auth/api/v1/verify')
+            .post("/auth/api/v1/reset")
             .set(headers)
-        expect(response.status).toBe(401)
-        expect(response.body).toHaveProperty('message', 'Email not found');
-        // console.log(JSON.stringify(response.body, null, 2));
-    });
-    test("Should Return 404 If User Not Found ", async () => {
+            .send(testuser6)
+        expect(response.status).toBe(400)
+    })
+    test("Should Return 400 User Not Found ", async () => {
         const headers = {
-            "Content-Type":"application/json"
+            "Content-Type": "application/json"
         }
         const response = await request(app)
-            .get("/auth/api/v1/verify")
+            .post("/auth/api/v1/reset")
             .set(headers)
-            .query({email:"dummymail@gmail.com"})
+            .send(testuser7)
         expect(response.status).toBe(404)
-        // console.log(JSON.stringify(response.body, null, 2));
     });
-    // test("Should Render Verified EJS If User Found", async () => {
-    //     const headers = {
-    //         "Content-Type":"application/json"
-    //     }
-    //     const response = await request(app)
-    //         .get("/auth/api/v1/verify?email=testuser5@gmail.com")
-    //         .set(headers)
-    //     expect(response.status).toBe(200)
-    //     console.log(JSON.stringify(response.body, null, 2));
-    // })
+    test("Should Return 200 Sent Password Reset Link To User ", async () => {
+        const headers = {
+            "Content-Type" : "application/json"
+        }
+        const response = await request(app)
+            .post("/auth/api/v1/reset")
+            .set(headers)
+            .send({email: "firstUser123@gmail.com"})
+        expect(response.status).toBe(200)
+        console.log(response.body)
+    })
 });

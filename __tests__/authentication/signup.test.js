@@ -47,7 +47,6 @@ describe('POST /auth/api/v1/signup', () => {
             .post("/auth/api/v1/signup")
             .set(headers)
             .send(testuser1);
-
         expect(response.statusCode).toBe(201);
     });
     test('Should Return Name,Username,Email,Password Is Empty', async () => {
