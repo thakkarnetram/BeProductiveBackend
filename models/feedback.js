@@ -13,6 +13,7 @@ const feedbackSchema = new mongoose.Schema({
     userId: {
         type: String,
         required: true,
+        ref: "users"
     },
     feedback: {
         type: String,

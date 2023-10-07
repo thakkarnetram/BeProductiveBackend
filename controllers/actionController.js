@@ -378,7 +378,7 @@ exports.addFeedback = asyncErrorHandler(async (req, res, next) => {
     if (!(feedbackMessage)) {
         return res
             .status(403)
-            .send({message: 'Feedback message cant be empty'});
+            .json({message: 'Feedback message cant be empty'});
     }
 
     const feedback = new Feedback({
