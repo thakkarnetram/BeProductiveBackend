@@ -7,6 +7,7 @@ const Channel = require("../models/Channel")
 const Message = require("../models/Message");
 const asyncErrorHandler = require('../utils/AsyncErrorHandler');
 const {use} = require("bcrypt/promises");
+const Feedback = require("../models/feedback");
 const {io} = require("../utils/socket")
 
 //  NOTES SECTION
@@ -335,6 +336,61 @@ exports.createChannel = asyncErrorHandler(async (req, res, next) => {
 });
 
 // TODO UPDATE CHANNEL NAME & DELETE CHANNEL NAME
+// MESSAGE SECTION
+exports.sendMessage = asyncErrorHandler(async (req, res, next) => {
+    const userId = req.user._id;
+    const {message} = req.body;
+    const channelId = req.query._id;
+    if (!userId) {
+        return res.status(400).json({message: "User Id Missing"})
+    }
+    if (!message){
+        return res.status(400).json({message:"Message cannot be empty"})
+    }
+    try {
+        const Channel = await Channel.findById(channelId);
+        const UserExists = await User.findById(userId);
+        if (!Channel) {
+            return res.status(404).json({message:"No channel found with given ID"})
+        }
+        if (!UserExists){
+            return res.status(404).json({message:"No user found with given ID"})
+        }
+        const newMessage = new Message({
+            message,
+            sentBy:userId,
+            channel:channelId,
+        })
+        await newMessage.save();
+        return res.status(200).json(newMessage)
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({message: "Internal Server Error"})
+    }
+})
+
+// FEEDBACK SECTION
+exports.addFeedback = asyncErrorHandler(async (req, res, next) => {
+    const userId = req.user._id;
+    const { feedbackMessage } = req.body;
+
+    if (!(feedbackMessage)) {
+        return res
+            .status(403)
+            .json({message: 'Feedback message cant be empty'});
+    }
+
+    const feedback = new Feedback({
+        feedback: feedbackMessage,
+        userId
+    });
+
+    feedback
+        .save()
+        .then(() =>
+            res.status(201).json({message: `Feedback added`, feedback}),
+        );
+});
 
 // // MESSAGE SECTION
 // exports.sendMessage = asyncErrorHandler(async (req, res, next) => {
