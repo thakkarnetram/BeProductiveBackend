@@ -8,6 +8,7 @@ const Message = require("../models/Message");
 const asyncErrorHandler = require('../utils/AsyncErrorHandler');
 const {use} = require("bcrypt/promises");
 const Feedback = require("../models/feedback");
+const {io} = require("../utils/socket")
 
 //  NOTES SECTION
 exports.getNotes = asyncErrorHandler(async (req, res, next) => {
@@ -278,7 +279,6 @@ exports.getChannelById = asyncErrorHandler(async (req, res, next) => {
             return res.status(403).json({message: "Permission denied "});
         }
         return res.status(200).json(findChannel)
-
     } catch (e) {
         console.log(e);
         return res.status(500).json({message: "Internal Server Error"})
@@ -336,7 +336,6 @@ exports.createChannel = asyncErrorHandler(async (req, res, next) => {
 });
 
 // TODO UPDATE CHANNEL NAME & DELETE CHANNEL NAME
-
 // MESSAGE SECTION
 exports.sendMessage = asyncErrorHandler(async (req, res, next) => {
     const userId = req.user._id;
@@ -392,3 +391,47 @@ exports.addFeedback = asyncErrorHandler(async (req, res, next) => {
             res.status(201).json({message: `Feedback added`, feedback}),
         );
 });
+
+// // MESSAGE SECTION
+// exports.sendMessage = asyncErrorHandler(async (req, res, next) => {
+//     // Assuming the user ID is available in req.user
+//     const userId = req.user._id;
+//     const { message } = req.body;
+//     const channelId = req.params._id;
+//     if (!userId) {
+//         return res.status(400).json({ message: "User Id Missing" });
+//     }
+//
+//     if (!message) {
+//         return res.status(400).json({ message: "Message cannot be empty" });
+//     }
+//     try {
+//         const channel = await Channel.findById(channelId);
+//         const UserExists = await User.findById(userId);
+//
+//         if (!channel) {
+//             return res.status(404).json({ message: "No channel found with given ID" });
+//         }
+//
+//         if (!UserExists) {
+//             return res.status(404).json({ message: "No user found with given ID" });
+//         }
+//
+//         // Create a new message and save it to the database
+//         const newMessage = new Message({
+//             text: message,
+//             sentBy: userId, // Include the user ID when creating the message
+//             channel: channelId,
+//         });
+//
+//         await newMessage.save();
+//
+//         // Emit the new message to the specific socket (user) who sent it
+//         io.emit("chat message", newMessage);
+//
+//         return res.status(200).json(newMessage);
+//     } catch (e) {
+//         console.log(e);
+//         return res.status(500).json({ message: "Internal Server Error" });
+//     }
+// });
