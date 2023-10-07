@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-<<<<<<< Updated upstream
       <module fileurl="file://$PROJECT_DIR$/.idea/BeProductiveBackend.iml" filepath="$PROJECT_DIR$/.idea/BeProductiveBackend.iml" />
-=======
-      <module fileurl="file://$PROJECT_DIR$/.idea/BackendProductiveApp.iml" filepath="$PROJECT_DIR$/.idea/BackendProductiveApp.iml" />
->>>>>>> Stashed changes
     </modules>
   </component>
 </project>

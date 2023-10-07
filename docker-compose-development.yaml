@@ -1,0 +1,9 @@
+version: "3"
+services:
+  server:
+    image: thakkarnetram/be-productive-server:1.1
+    container_name: be-productive-container
+    ports:
+      - "8082:8082"
+    env_file:
+      - .env
