@@ -24,6 +24,9 @@ router
     .route('/api/v1/todos')
     .get(authController.protect, actionController.getTodos);
 router
+    .route('/api/v1/todos/recents')
+    .get(authController.protect, actionController.getRecentTodos);
+router
     .route('/api/v1/todos/add')
     .post(authController.protect, actionController.addTodos);
 router

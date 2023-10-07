@@ -81,6 +81,16 @@ exports.getTodos = asyncErrorHandler(async (req, res, next) => {
     }
 });
 
+exports.getRecentTodos = asyncErrorHandler(async (req, res, next) => {
+    const userEmail = req.user.email;
+    const todos = await ToDo.find({email: userEmail}).sort({createdAt: -1}).limit(2);
+    if (!todos) {
+        return res.status(404).json({message: 'No Todos Found'});
+    } else {
+        return res.status(200).json(todos);
+    }
+});
+
 exports.addTodos = async (req, res, next) => {
     const {todoTitle, todoDescription, todoPriority, todoStatus} = req.body;
     const email = req.user.email;
