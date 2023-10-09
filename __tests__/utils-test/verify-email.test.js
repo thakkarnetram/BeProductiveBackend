@@ -60,14 +60,16 @@ describe('GET /auth/api/v1/verify',() => {
         expect(response.status).toBe(404)
         // console.log(JSON.stringify(response.body, null, 2));
     });
-    // test("Should Render Verified EJS If User Found", async () => {
-    //     const headers = {
-    //         "Content-Type":"application/json"
-    //     }
-    //     const response = await request(app)
-    //         .get("/auth/api/v1/verify?email=testuser5@gmail.com")
-    //         .set(headers)
-    //     expect(response.status).toBe(200)
-    //     console.log(JSON.stringify(response.body, null, 2));
-    // })
+    test("Should Render Verified EJS If User Found", async () => {
+        const headers = {
+            "Content-Type":"application/json"
+        }
+        const response = await request(app)
+            .get("/auth/api/v1/verify?email=firstUser123@gmail.com")
+            .set(headers)
+        console.log(JSON.stringify(response.body, null, 2));
+        expect(response.status).toBe(200);
+        expect(response.text).toContain('User Verified');
+        expect(response.text).toContain('Your account has been successfully verified.');
+    })
 });
