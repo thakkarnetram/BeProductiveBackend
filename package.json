@@ -6,7 +6,7 @@
   "scripts": {
     "start": "cross-env $(cat .env.dev | xargs) nodemon server.js",
     "dev": "cross-env $(cat .env.dev | xargs) nodemon server.js",
-    "test": "cross-env $(cat .env.test | xargs) jest --runInBand --detectOpenHandles"
+    "test": "cross-env $(cat .env.test | xargs) jest --runInBand --detectOpenHandles --maxWorker=100%"
   },
   "jest": {
     "collectCoverage": true,
