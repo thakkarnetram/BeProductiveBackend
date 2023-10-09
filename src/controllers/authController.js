@@ -210,16 +210,15 @@ exports.handlePasswordReset = async (req, res) => {
         console.log(req.body);  // Log the entire request body
         const user = await User.findById(req.params._id);
         if (!user) {
-            return res.status(401).json({ message: "user not found" });
+            return res.status(404).json({ message: "user not found" });
         }
         const newPassword = req.body.newPassword;
         // Check if newPassword is a non-empty string
         if (!newPassword) {
-            return res.status(401).json({ message: "Provide a valid password" });
+            return res.status(404).json({ message: "Provide a valid password" });
         }
         const strongPasswordRegex =
             /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
-
         // Check if newPassword meets the strong password requirements
         if (!strongPasswordRegex.test(newPassword.trim())) {
             return res.status(401).json({ message: "Password must be 6 chars and meet requirements" });
@@ -230,7 +229,7 @@ exports.handlePasswordReset = async (req, res) => {
         return res.render("success.ejs");
     } catch (error) {
         console.log(error);
-        return res.status(500).render("fail.ejs");
+        return res.render("fail.ejs");
     }
 };
 

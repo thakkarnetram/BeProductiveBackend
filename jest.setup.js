@@ -32,7 +32,6 @@ beforeAll(async () => {
             { isEmailVerified: true }
         );
     }
-    console.log(userAdded + "MY VALUE IS")
 });
 
 afterAll(async () => {

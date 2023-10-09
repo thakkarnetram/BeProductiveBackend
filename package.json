@@ -9,13 +9,13 @@
     "test": "cross-env $(cat .env.test | xargs) jest --runInBand --detectOpenHandles --maxWorker=100%"
   },
   "jest": {
-    "collectCoverage": true,
     "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.jsx?$",
     "moduleFileExtensions": [
       "js",
       "jsx",
       "json",
-      "node"
+      "node",
+      "ejs"
     ],
     "testEnvironment": "node",
     "coveragePathIgnorePatterns": [
@@ -24,7 +24,9 @@
     "testEnvironmentOptions": {
       "PORT": 8083
     },
-    "setupFilesAfterEnv": ["./jest.setup.js"],
+    "setupFilesAfterEnv": [
+      "./jest.setup.js"
+    ],
     "testTimeout": 20000
   },
   "keywords": [],

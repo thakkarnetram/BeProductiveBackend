@@ -18,7 +18,7 @@ app.use(bodyParser.json());
 app.use(cors());
 // Set the views directory and the view engine
 app.set('views', path.join(__dirname, 'src', 'views'));
-app.set("view engine", "ejs");
+app.set('view engine', 'ejs');
 // log routes the user hits
 app.use((req, res, next) => {
     console.log(`${req.method} ${req.originalUrl}`);
