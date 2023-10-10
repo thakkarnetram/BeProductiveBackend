@@ -1,4 +1,6 @@
 # BeProductiveBackend
+<h3><a href="./CONTRIBUTING.md">For Collaborating in this Project </a></h3>
+<hr>
 Main repo -> https://github.com/thakkarnetram/Productivity-App
 <br>
 Features<br>
@@ -18,5 +20,4 @@ Features<br>
 <br>
 <hr>
 <h3><a href="https://join.slack.com/t/be-productive-world/shared_invite/zt-22xf2o5va-vZl19htTM3rR1ioEJzl2Cg">Join the Slack Community </a></h3>
-<hr>
-<h3><a href="./CONTRIBUTING.md">For Collaborating in this Project </a></h3>
+
