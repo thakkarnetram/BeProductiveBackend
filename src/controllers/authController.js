@@ -332,7 +332,7 @@ exports.protect = async (req, res, next) => {
 
         // Attach the user information to the request object for later use
         req.user = user;
-        console.log(JSON.stringify(req.user));
+        // console.log(JSON.stringify(req.user));
 
         // Continue to the next middleware
         next();

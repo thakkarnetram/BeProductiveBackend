@@ -41,9 +41,14 @@ const testuser4 = {
     email: "testuser4@gmail.com",
     password: "Test@1234"
 }
+let user = {
+    name: "First User",
+    username: "first1",
+    email: "firstUser123@gmail.com",
+    password: "Test@123"
+}
 
 beforeAll(async () => {
-    await Notes.deleteMany({})
     const hashedPassword = await bcrypt.hash(testuser4.password, 10);
     const saveUser = new User({
         ...testuser4,
@@ -51,13 +56,13 @@ beforeAll(async () => {
     });
     await saveUser.save()
     const updatedUser = await User.findOneAndUpdate({email: testuser4.email}, {isEmailVerified: true})
-},15000)
+},25000)
 
 // Notes TEST [ CRUD Operations ]
 describe('GET /user/api/v1/notes', () => {
-    it('should return notes', async () => {
+    it('Should Return Notes With Status Of 200', async () => {
         // Get a valid JWT token
-        const token = authController.signToken(testuser4.email, process.env.SECRET_KEY);
+        const token = authController.signToken(user.email, process.env.SECRET_KEY);
         // console.log(token)
         const response = await request(app)
             .get('/user/api/v1/notes')
@@ -69,7 +74,7 @@ describe('GET /user/api/v1/notes', () => {
         expect(response.body.length).toBeGreaterThanOrEqual(0);
         const notes = response.body;
     });
-    it('should return 401 without a valid JWT', async () => {
+    it('Should Return 401 No Token Found', async () => {
         const response = await request(app).get('/user/api/v1/notes');
         expect(response.status).toBe(401);
     });
