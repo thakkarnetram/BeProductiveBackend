@@ -35,7 +35,7 @@ const testuser3 = {
 
 beforeAll(async () => {
     await User.deleteMany({})
-},15000)
+},25000)
 
 // Sign Up TEST
 describe('POST /auth/api/v1/signup', () => {

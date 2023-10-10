@@ -59,8 +59,8 @@ exports.deleteNotes = asyncErrorHandler(async (req, res, next) => {
     const note = await Note.findOne({_id, email});
     if (!note) {
         return res
-            .status(404)
-            .json({message: 'No note found with this Id and Email'});
+            .status(401)
+            .json({message: 'Unauthorized to delete this'});
     }
     // if note exists and email matches delete it
     const deletedNote = await Note.findByIdAndDelete(_id);

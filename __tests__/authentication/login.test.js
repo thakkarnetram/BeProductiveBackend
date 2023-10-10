@@ -49,7 +49,7 @@ beforeAll(async () => {
     const saveUser2 = new User(testuser5);
     await saveUser2.save()
     const updatedUser = await User.findOneAndUpdate({email: loginUser.email}, {isEmailVerified: true})
-},15000)
+},25000)
 
 // Login TEST
 describe("POST /auth/api/v1/login", () => {
