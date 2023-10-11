@@ -46,5 +46,8 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
+      - name: Seed Database
+        run: node seed.js ${{ secrets.ATLAS_URI }}
+
       - name: Run Tests
         run: npm test

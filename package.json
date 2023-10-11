@@ -4,9 +4,10 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "cross-env $(cat .env.dev | xargs) nodemon server.js",
+    "start": "cross-env $(cat .env | xargs) nodemon server.js",
     "dev": "cross-env $(cat .env.dev | xargs) nodemon server.js",
-    "test": "cross-env $(cat .env.test | xargs) jest --runInBand --detectOpenHandles --maxWorker=100%"
+    "test": "cross-env $(cat .env.test | xargs) jest --runInBand --detectOpenHandles --maxWorker=100%",
+    "seed": "node seed.js"
   },
   "jest": {
     "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.jsx?$",
@@ -58,6 +59,7 @@
   "devDependencies": {
     "cross-env": "^7.0.3",
     "jest": "^29.7.0",
+    "seed": "^0.4.4",
     "supertest": "^6.3.3"
   }
 }

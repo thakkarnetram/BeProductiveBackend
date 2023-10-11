@@ -82,6 +82,7 @@ describe('DELETE /user/api/v1/notes/delete/:_id', () => {
             "Authorization": `Bearer ${token}`
         }
         const note2 = await Notes.find({email: user1.email})
+        console.log(note2)
         // const noteID = note2[0]._id;
         const response = await request(app)
             .delete(`/user/api/v1/notes/delete/${note2}`)
