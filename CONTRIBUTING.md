@@ -62,17 +62,20 @@ GMAIL_PASS=
 
 Start the Application in Production Mode:
 
-```npm start
+```bash
+npm start
 ```
 
 Start the Development Server:
 
-```npm run dev
+```bash
+npm run dev
 ```
 
 Run Tests:
 
-```npm run test
+```bash
+npm run test
 ```
 
 ### Docker Development
@@ -80,11 +83,11 @@ Run Tests:
 If you prefer using Docker for development, follow these steps:
 Create a .env file in the project root with the same content as .env.dev.
 Run the following Docker command:
-
-``` docker-compose -f docker-compose-development.yaml up
+            
+```bash
+ docker-compose -f docker-compose-development.yaml up
  ```
 
-### Issue Reporting
+## Issue Reporting
 
-If you find a bug or have a suggestion for improvement, please open an issue on
-the <a href="https://github.com/thakkarnetram/BeProductiveBackend/issues">issue tracker</a>.
+If you find a bug or have a suggestion for improvement, please open an issue on the [issue tracker](https://github.com/thakkarnetram/BeProductiveBackend/issues).
