@@ -1,5 +1,5 @@
 *.env
-.env.dev
+/.env.dev
 .env.test
 config/secret.json
 # dependencies
