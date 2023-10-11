@@ -25,7 +25,7 @@ cd BeProductiveBackend
 
 ### Environment Variables
 
-### Production Environment (.env)
+Production Environment (.env)
 
 For running the application in production mode, create a .env file in the project root with the following content:
 
@@ -36,7 +36,7 @@ GMAIL_ID=
 GMAIL_PASS=
 ```
 
-### Development Environment (.env.dev)
+Development Environment (.env.dev)
 
 For running the development server, create a .env.dev file with similar content as .env:
 
@@ -47,7 +47,7 @@ GMAIL_ID=
 GMAIL_PASS=
 ```
 
-### Testing Environment (.env.test)
+Testing Environment (.env.test)
 
 Create a .env.test file for using a local database for testing:
 
