@@ -91,3 +91,6 @@ Run the following Docker command:
 ## Issue Reporting
 
 If you find a bug or have a suggestion for improvement, please open an issue on the [issue tracker](https://github.com/thakkarnetram/BeProductiveBackend/issues).
+
+### JOIN THE COMMUNITY 
+<h3><a href="https://join.slack.com/t/be-productive-world/shared_invite/zt-22xf2o5va-vZl19htTM3rR1ioEJzl2Cg">Slack Community </a></h3>
