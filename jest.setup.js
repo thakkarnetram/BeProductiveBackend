@@ -17,6 +17,7 @@ let user2 = {
 }
 beforeAll(async () => {
     if (!userAdded) {
+        require('dotenv').config({path:`.env.${process.env.NODE_ENV}`})
         const mongoUri = process.env.ATLAS_URI; // Replace with your MongoDB URI
         await mongoose.connect(mongoUri, {
             useNewUrlParser: true,

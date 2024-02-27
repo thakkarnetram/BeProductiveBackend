@@ -13,5 +13,5 @@ build
 
 # misc
 .DS_Store
-.env
+.env.prod.prod
 npm-debug.log

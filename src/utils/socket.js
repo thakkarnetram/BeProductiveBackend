@@ -1,27 +1,24 @@
-const socketIO = require("socket.io");
-const Message = require("../models/Message");
+let users = []
 
-let io; // Store the io instance globally
+exports.socketLogic = (io) => {
+    io.on("connection",(socket)=>{
+        console.log("User connected " + socket.id);
 
-// Initialize socket.io and store the instance in the io variable
-const socketConnection = (server) => {
-    io = socketIO(server);
-    io.on("connection", (socket) => {
-        console.log("User connected");
-
-        // Handle socket events as needed
-        socket.on("chat message", async (data) => {
-            console.log(`Message received: ${data.message}`);
-            // Add your logic to handle the received message
+        socket.on("message",(message) => {
+            console.log(message)
+            io.emit("messageResponse",message);
         });
 
-        // Add more socket event handlers as needed
+        socket.on("newUser",(user)=>{
+            users.push(user);
+            io.emit("newUserResponse",user);
+        })
 
-        // Disconnect event
-        socket.on("disconnect", () => {
-            console.log("User disconnected");
-        });
-    });
+        socket.on("disconnect",()=>{
+            console.log("disconnected " + socket.id)
+            users = users.filter((user) => user.sockerID !== socket.id);
+            io.emit("newUserRes",users);
+            socket.disconnect();
+        })
+    })
 }
-
-module.exports = socketConnection;
