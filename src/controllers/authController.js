@@ -7,6 +7,7 @@ const sendEmails = require("../utils/emailSender");
 const {sign} = require("jsonwebtoken");
 const constants  = require("../constants/constants")
 const ROOT_URL = constants.ROOT_URL;
+require('dotenv').config({path:`.env.${process.env.NODE_ENV}`})
 
 exports.signToken = (email) => {
     return jwt.sign(
