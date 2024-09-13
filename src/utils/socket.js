@@ -1,34 +1,38 @@
-const {Timestamp} = require("mongodb");
-let users = []
+const { Timestamp } = require("mongodb");
+let users = [];
 
 exports.socketLogic = (io) => {
-    io.on("connection", (socket) => {
-        console.log("User connected " + socket.id);
+  io.on("connection", (socket) => {
+    // User Connection
+    console.log("User connected " + socket.id);
 
-        socket.on("message", (data) => {
-            let {message, name,timeStamp, email,userName} = data;
+    // Getting the meessage
+    socket.on("chat message", (msg) => {
+      //   let { message, name, timeStamp, email, userName } = data;
 
-            const newData = {
-                text: message,
-                userName,
-                name,
-                email,
-                time: timeStamp
-            }
-            io.emit("messageResponse", newData);
-            console.log(newData)
-        });
+      //   const newMessage = {
+      //     text: message,
+      //     userName,
+      //     name,
+      //     email,
+      //     time: timeStamp,
+      //   };
+      io.emit("chat message", msg);
+      console.log(msg);
+    });
 
-        socket.on("newUser", (user) => {
-            users.push(user);
-            io.emit("newUserResponse", user);
-        })
+    // New User Connection
+    socket.on("newUser", (user) => {
+      users.push(user);
+      io.emit("newUserResponse", user);
+    });
 
-        socket.on("disconnect", () => {
-            console.log("disconnected " + socket.id)
-            users = users.filter((user) => user.sockerID !== socket.id);
-            io.emit("newUserRes", users);
-            socket.disconnect();
-        })
-    })
-}
+    // Disconnection
+    socket.on("disconnect", () => {
+      console.log("disconnected " + socket.id);
+      users = users.filter((user) => user.sockerID !== socket.id);
+      io.emit("newUserRes", users);
+      socket.disconnect();
+    });
+  });
+};
