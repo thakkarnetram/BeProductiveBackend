@@ -135,7 +135,7 @@ exports.login = async (req, res) => {
     if (passwordsMatch) {
       // Returning the token
       const token = signToken(user.email);
-      return res.status(200).json({ message: "Login Successful", token });
+      return res.status(200).json({ message: "Login Successful", token , _id:user._id });
     } else {
       // Invalid password
       return res.status(401).json({ message: "Invalid password" });

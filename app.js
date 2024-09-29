@@ -10,7 +10,9 @@ app.set('view engine', 'ejs');
 const authRoute = require("./src/router/authRoute");
 const actionRoute = require("./src/router/actionRouter");
 const pingRoute = require("./src/router/pingRoute")
+const profileRoute = require("./src/router/profileRouter")
 app.use("/auth", authRoute);
 app.use("/user", actionRoute);
+app.use("/",profileRoute)
 app.use("/", pingRoute);
 module.exports = app;
