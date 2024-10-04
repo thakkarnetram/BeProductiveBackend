@@ -1,43 +1,49 @@
 const mongoose = require("mongoose");
 
 const channelSchema = new mongoose.Schema({
-    channelName: {
+  channelName: {
+    type: String,
+    require: true,
+  },
+  workspace: [
+    {
+      _id: {
         type: String,
-        require: true
-    },
-    workspace: [
-        {
-            _id: {
-                type: String,
-                ref: 'workspace'
-            },
-            workspaceName: {
-                type: String,
-            }
-        }
-    ],
-    admin: {
+        ref: "workspace",
+      },
+      workspaceName: {
         type: String,
-        ref: "users"
+      },
     },
-    messages: [
-        {
-            text: String,
-            user: {
-                type: String,
-                ref: "users"
-            },
-            timestamp: {
-                type: Date,
-                default: Date.now
-            }
-        }
-    ],
-    createdAt:{
-        type:Date,
-        default:Date.now
-    }
-})
+  ],
+  admin: {
+    type: String,
+    ref: "users",
+  },
+  messages: [
+    {
+      text: String,
+      user: {
+        type: String,
+        ref: "users",
+      },
+      timestamp: {
+        type: Date,
+        default: Date.now,
+      },
+    },
+  ],
+  members: [
+    {
+      type: String,
+      ref: "users",
+    },
+  ],
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
 
 const Channel = mongoose.model("channels", channelSchema);
 module.exports = Channel;

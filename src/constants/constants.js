@@ -1,1 +1,1 @@
-exports.ROOT_URL = "http://192.168.1.19:8082";
+exports.ROOT_URL = "http://192.168.29.154:8082";
