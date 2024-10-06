@@ -8,16 +8,7 @@ exports.socketLogic = (io) => {
 
     // Getting the meessage
     socket.on("chat message", (msg) => {
-      //   let { message, name, timeStamp, email, userName } = data;
-
-      //   const newMessage = {
-      //     text: message,
-      //     userName,
-      //     name,
-      //     email,
-      //     time: timeStamp,
-      //   };
-      io.emit("chat message", msg);
+      io.broadcast.emit("chat message", msg);
       console.log(msg);
     });
 

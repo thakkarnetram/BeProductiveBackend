@@ -182,10 +182,6 @@ exports.getWorkSpaceById = asyncErrorHandler(async (req, res, next) => {
     if (!findSpace) {
       return res.status(404).json({ message: "Workspace not Found" });
     }
-    if (findSpace.admin !== userId && !findSpace.members.includes(userId)) {
-      return res.status(403).json({ message: "Permission denied " });
-    }
-
     return res.status(200).json(findSpace);
   } catch (e) {
     console.log(e);
@@ -331,7 +327,12 @@ exports.getLatestChannel = asyncErrorHandler(async (req, res, next) => {
   const userId = req.user._id;
   // Find the latest workspace for the specific user
   try {
-    const latestChannel = await Channel.find({ admin: userId })
+    const latestChannel = await Channel.find({
+      $or: [
+        { admin: userId }, // Channels where the user is the admin
+        { members: userId }, // Channels where the user is a member
+      ],
+    })
       .sort({ createdAt: -1 }) // Sort by creation date in descending order to get the latest
       .limit(2); // Limit the result to one workspace (the latest)
 
@@ -381,8 +382,6 @@ exports.createChannel = asyncErrorHandler(async (req, res, next) => {
   }
 });
 
-
-
 // FEEDBACK SECTION
 exports.addFeedback = asyncErrorHandler(async (req, res, next) => {
   const userId = req.user._id;
@@ -401,4 +400,3 @@ exports.addFeedback = asyncErrorHandler(async (req, res, next) => {
     .save()
     .then(() => res.status(201).json({ message: `Feedback added`, feedback }));
 });
-

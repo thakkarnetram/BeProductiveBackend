@@ -5,8 +5,7 @@ const util = require("util");
 const nodemailer = require("nodemailer");
 const sendEmails = require("../utils/emailSender");
 const { sign } = require("jsonwebtoken");
-const constants = require("../constants/constants");
-const ROOT_URL = constants.ROOT_URL;
+
 require("dotenv").config({ path: `.env.${process.env.NODE_ENV}` });
 
 exports.signToken = (email) => {
@@ -135,7 +134,14 @@ exports.login = async (req, res) => {
     if (passwordsMatch) {
       // Returning the token
       const token = signToken(user.email);
-      return res.status(200).json({ message: "Login Successful", token , _id:user._id });
+      return res.status(200).json({
+        message: "Login Successful",
+        token,
+        _id: user._id,
+        name: user.name,
+        username: user.username,
+        email: user.email,
+      });
     } else {
       // Invalid password
       return res.status(401).json({ message: "Invalid password" });
@@ -178,7 +184,7 @@ exports.resetPasswordLink = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    const link = `${ROOT_URL}/auth/api/v1/reset/${user._id}`;
+    const link = `${process.env.ROOT_URL}/auth/api/v1/reset/${user._id}`;
     await sendEmails.resetEmail(user.email, link);
     return res
       .status(200)
