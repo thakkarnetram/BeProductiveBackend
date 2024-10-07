@@ -8,7 +8,7 @@ exports.socketLogic = (io) => {
 
     // Getting the meessage
     socket.on("chat message", (msg) => {
-      io.broadcast.emit("chat message", msg);
+      socket.broadcast.emit("chat message", msg);
       console.log(msg);
     });
 
