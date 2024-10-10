@@ -6,9 +6,7 @@ const Workspace = require("../models/Workspace");
 const Channel = require("../models/Channel");
 const Message = require("../models/Message");
 const asyncErrorHandler = require("../utils/AsyncErrorHandler");
-const { use } = require("bcrypt/promises");
 const Feedback = require("../models/feedback");
-const { io } = require("../utils/socket");
 
 //  NOTES SECTION
 exports.getNotes = asyncErrorHandler(async (req, res, next) => {
@@ -355,13 +353,14 @@ exports.createChannel = asyncErrorHandler(async (req, res, next) => {
     return res.status(400).json({ message: "Channel name is required" });
   }
   try {
+    // const findSpace = await Workspace.findById({ _id: spaceId });
     const workspace = await Workspace.findById({ _id: req.params._id });
     if (!workspace) {
       return res.status(404).json({ message: "No workspace found with Id" });
     }
-    if (findSpace.admin !== userId && !findSpace.members.includes(userId)) {
-      return res.status(403).json({ message: "Permission denied " });
-    }
+    // if (findSpace.admin !== userId && !findSpace.members.includes(userId)) {
+    //   return res.status(403).json({ message: "Permission denied " });
+    // }
 
     // Create a new channel based on the request body
     const newChannel = new Channel({

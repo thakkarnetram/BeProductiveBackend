@@ -8,7 +8,7 @@ exports.verifyEmail = async (email, token) => {
       pass: process.env.GMAIL_PASS,
     },
   });
-  const link = `${process.env.ROOT_URL}/auth/api/v1/verify`;
+  const link = `${process.env.ROOT_URL_KOYEB}/auth/api/v1/verify`;
   const mail = process.env.GMAIL_ID;
   const mailOptions = {
     from: process.env.GMAIL_ID,

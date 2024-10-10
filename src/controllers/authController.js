@@ -184,7 +184,7 @@ exports.resetPasswordLink = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    const link = `${process.env.ROOT_URL}/auth/api/v1/reset/${user._id}`;
+    const link = `${process.env.ROOT_URL_KOYEB}/auth/api/v1/reset/${user._id}`;
     await sendEmails.resetEmail(user.email, link);
     return res
       .status(200)

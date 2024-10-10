@@ -21,7 +21,7 @@ exports.generateInviteLink = asyncErrorHandler(async (req, res, next) => {
         .json({ message: "You are not a member of this workspace" });
     }
     // Generate the invite link (in this case, just using the workspace ID)
-    const inviteLink = `${process.env.ROOT_URL}/api/v1/invite/join/${workspaceId}`;
+    const inviteLink = `${process.env.ROOT_URL_KOYEB}/api/v1/invite/join/${workspaceId}`;
 
     return res.status(200).json({ inviteLink });
   } catch (error) {
