@@ -26,38 +26,6 @@ const signToken = (email) => {
   );
 };
 
-// exports.googleAuth = async (req, res) => {
-//   try {
-//     const { token } = req.body;
-//     if (!token) {
-//       return res.status(404).json({ message: "No token found" });
-//     }
-//     console.log("Received token:", token);
-
-//     const googleToken = await admin.auth().verifyIdToken(token);
-//     console.log("Google Token:", googleToken);
-
-//     const googleEmail = googleToken.email;
-//     console.log("Google Email:", googleEmail);
-
-//     let user = await User.findOne({ email: googleEmail });
-//     console.log("User:", user);
-
-//     if (!user) {
-//       user = new User({ email: googleEmail, isGoogleAuth: true });
-//       await user.save();
-//     }
-
-//     const newToken = signToken(user.email);
-//     console.log("New Token:", newToken);
-
-//     return res.status(200).json({ token: newToken });
-//   } catch (error) {
-//     console.error("Error:", error);
-//     res.status(500).json({ message: "Internal server error" });
-//   }
-// };
-
 exports.signup = async (req, res) => {
   try {
     const { name, username, email, password } = req.body;
@@ -243,76 +211,6 @@ exports.handlePasswordReset = async (req, res) => {
   }
 };
 
-// middleware
-// exports.protect = async (req, res, next) => {
-//   try {
-//     const token = req.headers.authorization;
-//     // let jwtToken;
-//     // If no token is provided
-//     if (!token) {
-//       return res.status(401).json({ message: "No Token Found" });
-//     }
-//     if (token && token.startsWith("Bearer ")) {
-//       // jwtToken = token.split(" ")[1];
-//       try {
-//         const googleToken = await admin.auth.verifyIdToken(token.split(" ")[1]);
-//         const email = googleToken.email;
-
-//         // find user
-//         const user = await User.findOne({ email });
-//         // if token invalid return
-//         if (!user) {
-//           return res
-//             .status(404)
-//             .json({ message: "Provided Details are invalid" });
-//         }
-//         // sending the user obj
-//         req.user = user;
-//         next();
-//       } catch (error) {
-//         res.status(401).json({ message: "Invalid token ", error });
-//       }
-//     } else {
-//       try {
-//         // regular tokens
-//         const jwtToken = token;
-//         const decodedToken = await util.promisify(jwt.verify)(
-//           jwtToken,
-//           process.env.SECRET_KEY
-//         );
-//         // user checking if there
-//         const user = await User.findOne({ email });
-//         //  if mot there return 404
-//         if (!user) {
-//           return res.status(404).json({ message: "Invalid details " });
-//         }
-//         // attach the user obj
-//         req.user = user;
-//         next();
-//       } catch (error) {
-//         res.status(401).json({ message: "Invalid Details of token ", error });
-//       }
-//     }
-//     // Validate and decode the token
-//     // const decodedToken = await util.promisify(jwt.verify)(
-//     //   jwtToken,
-//     //   process.env.SECRET_KEY
-//     // );
-//     // Check if user exists
-//     // const user = await User.findOne({ email: decodedToken.email });
-//     // if (!user) {
-//     //   return res
-//     //     .status(404)
-//     //     .json({ message: "The user with the given token does not exist" });
-//     // }
-//     // Attach the user information to the request object for later use
-//     // req.user = user;
-//     // Continue to the next middleware
-//     // next();
-//   } catch (error) {
-//     res.status(401).json({ message: error.message });
-//   }
-// };
 
 exports.protect = async (req, res, next) => {
   try {

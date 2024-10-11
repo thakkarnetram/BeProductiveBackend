@@ -1,5 +1,6 @@
 const { Timestamp } = require("mongodb");
 const Message = require("../models/Message");
+const Channel = require("../models/Channel");
 let users = [];
 
 exports.socketLogic = (io) => {
@@ -12,9 +13,8 @@ exports.socketLogic = (io) => {
       socket.join(channelId);
       console.log(`${socket.id} joined the channel ${channelId}`);
     });
-
     // Getting the meessage
-    socket.on("chat message", async (msg) => {  
+    socket.on("chat message", async (msg) => {
       try {
         // save message
         const newMessage = new Message({
@@ -24,11 +24,8 @@ exports.socketLogic = (io) => {
           channel: msg.channelID,
           sentOn: msg.date,
         });
-
         await newMessage.save();
-
-        socket.to(msg.channelID).emit("chat message", msg);
-        console.log(msg);
+        socket.to(msg.channelID).emit("chat message", { ...msg });
       } catch (e) {
         console.log("error ", e);
       }
