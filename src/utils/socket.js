@@ -6,7 +6,7 @@ let users = [];
 exports.socketLogic = (io) => {
   io.on("connection", (socket) => {
     // User Connection
-    console.log("User connected " + socket.id);
+    console.log("User connected ? " + socket.id);
 
     // User joins the channel
     socket.on("join-channel", (channelId) => {
@@ -16,15 +16,30 @@ exports.socketLogic = (io) => {
     // Getting the meessage
     socket.on("chat message", async (msg) => {
       try {
-        // save message
+        // save message to Message model
         const newMessage = new Message({
-          text: msg.message,
-          sentBy: msg.name,
-          sentAt: msg.timeStamp,
-          channel: msg.channelID,
-          sentOn: msg.date,
+          text: msg.text,
+          sentBy: msg.sentBy,
+          channel: msg.channel,
+          sentAt: msg.sentAt,
+          sentOn: msg.sentOn,
         });
         await newMessage.save();
+        // save message to Channel's message
+        const updatedChannel = await Channel.findByIdAndUpdate(
+          msg.channel,
+          {
+            $push: {
+              messages: {
+                text: msg.text,
+                sentBy: msg.sentBy,
+                sentAt: msg.sentAt,
+                sentOn: msg.sentOn,
+              },
+            },
+          },
+          { new: true }
+        );
         socket.to(msg.channelID).emit("chat message", { ...msg });
       } catch (e) {
         console.log("error ", e);

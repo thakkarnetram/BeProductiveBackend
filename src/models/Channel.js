@@ -22,12 +22,18 @@ const channelSchema = new mongoose.Schema({
   },
   messages: [
     {
-      text: String,
-      user: {
+      text: {
+        type: String,
+      },
+      sentBy: {
         type: String,
         ref: "users",
       },
-      timestamp: {
+      sentAt: {
+        type: String,
+        default: () => new Date().toLocaleTimeString(),
+      },
+      sentOn: {
         type: Date,
         default: Date.now,
       },

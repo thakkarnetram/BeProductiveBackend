@@ -306,7 +306,7 @@ exports.getChannelById = asyncErrorHandler(async (req, res, next) => {
       return res.status(404).json({ message: "Channel not found" });
     }
 
-    // Check if the user is either the admin or a member of the channel
+    // Check if the uscoer is either the admin or a member of the channel
     if (
       findChannel.admin.toString() !== userId &&
       !findChannel.members.includes(userId)
@@ -331,8 +331,8 @@ exports.getLatestChannel = asyncErrorHandler(async (req, res, next) => {
         { members: userId }, // Channels where the user is a member
       ],
     })
-      .sort({ createdAt: -1 }) // Sort by creation date in descending order to get the latest
-      .limit(2); // Limit the result to one workspace (the latest)
+      .sort({ createdAt: -1 })
+      .limit(2);
 
     if (!latestChannel) {
       return res.status(404).json({ message: "No Channel found" });
@@ -353,15 +353,10 @@ exports.createChannel = asyncErrorHandler(async (req, res, next) => {
     return res.status(400).json({ message: "Channel name is required" });
   }
   try {
-    // const findSpace = await Workspace.findById({ _id: spaceId });
     const workspace = await Workspace.findById({ _id: req.params._id });
     if (!workspace) {
       return res.status(404).json({ message: "No workspace found with Id" });
     }
-    // if (findSpace.admin !== userId && !findSpace.members.includes(userId)) {
-    //   return res.status(403).json({ message: "Permission denied " });
-    // }
-
     // Create a new channel based on the request body
     const newChannel = new Channel({
       channelName,
@@ -378,6 +373,28 @@ exports.createChannel = asyncErrorHandler(async (req, res, next) => {
   } catch (e) {
     console.error(e);
     return res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+// MESSAGE SECTION
+exports.getChannelMessageById = asyncErrorHandler(async (req, res, next) => {
+  const { channel } = req.params;
+  if (!channel) {
+    return res.status(400).json({ message: "Channel Id not found" });
+  }
+  try {
+    const messages = await Message.find({ channel });
+
+    if (!messages) {
+      return res
+        .status(404)
+        .json({ message: "No Messages found in the channel" });
+    } else {
+      return res.status(200).json(messages);
+    }
+  } catch (e) {
+    console.log(e);
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 
