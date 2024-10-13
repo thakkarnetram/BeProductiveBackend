@@ -8,7 +8,6 @@ const asyncErrorHandler = require("../utils/AsyncErrorHandler");
 exports.generateInviteLink = asyncErrorHandler(async (req, res, next) => {
   const userId = req.user._id;
   const { workspaceId } = req.params;
-
   try {
     // Find the workspace by the ID provided in the URL
     const workspace = await Workspace.findById(workspaceId);
@@ -21,7 +20,8 @@ exports.generateInviteLink = asyncErrorHandler(async (req, res, next) => {
         .json({ message: "You are not a member of this workspace" });
     }
     // Generate the invite link (in this case, just using the workspace ID)
-    const inviteLink = `${process.env.ROOT_URL_KOYEB}/invite/api/v1/${workspaceId}`;
+    // const inviteLink = `${process.env.ROOT_URL_KOYEB}/invite/api/v1/${workspaceId}`;
+    const inviteLink = `http://192.168.29.155:8082/invite/api/v1/${workspaceId}`;
     if (inviteLink) {
       return res.status(200).json({ inviteLink });
     }
@@ -32,7 +32,7 @@ exports.generateInviteLink = asyncErrorHandler(async (req, res, next) => {
 });
 
 exports.joinWorkspace = asyncErrorHandler(async (req, res, next) => {
-  const userId = req.user._id; // User that is trying to join the workspace
+  const userId = req.user._id;
   const { workspaceId } = req.params;
 
   try {

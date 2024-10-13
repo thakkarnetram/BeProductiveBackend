@@ -221,9 +221,10 @@ exports.createWorkSpace = asyncErrorHandler(async (req, res, next) => {
   try {
     const existingWorkspace = await Workspace.findOne({
       workspace,
-      admin: userId,
     });
+    console.log(workspace);
     if (existingWorkspace) {
+      console.log("Inside log  " + existingWorkspace);
       return res.status(400).json({ message: "Workspace name already exists" });
     }
 
@@ -238,7 +239,6 @@ exports.createWorkSpace = asyncErrorHandler(async (req, res, next) => {
     // Save the new workspace
     const savedWorkspace = await newWorkspace.save();
     // TODO Before creating channel for the specific space need to make sure we dont save "" , instead create a general channel
-    // Create a default channel using the projectName
     const newChannel = new Channel({
       channelName: projectName,
       workspace: {
