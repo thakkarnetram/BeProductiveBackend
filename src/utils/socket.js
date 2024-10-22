@@ -1,4 +1,3 @@
-const { Timestamp } = require("mongodb");
 const Message = require("../models/Message");
 const Channel = require("../models/Channel");
 let users = [];

@@ -32,7 +32,6 @@ exports.signup = async (req, res) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const strongPasswordRegex =
       /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
-
     // Validation
     if (!name || !username || !email || !password) {
       return res.status(400).json({ message: "ALL FIELDS ARE REQUIRED" });
@@ -50,6 +49,15 @@ exports.signup = async (req, res) => {
       return res
         .status(400)
         .json({ message: "Email already exists, please login." });
+    }
+    // Check if username already exists
+    const existingUserName = await User.findOne({ username });
+    if (existingUserName) {
+      return res
+        .status(400)
+        .json({
+          message: "Username already exixts , choose a different one ! ",
+        });
     }
     // Hash the password
     const hash = await bcrypt.hash(password, 10);
@@ -210,7 +218,6 @@ exports.handlePasswordReset = async (req, res) => {
     return res.render("fail.ejs");
   }
 };
-
 
 exports.protect = async (req, res, next) => {
   try {

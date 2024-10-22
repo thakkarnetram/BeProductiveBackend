@@ -31,6 +31,12 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  friends: [
+    {
+      type: String,
+      ref: "users",
+    },
+  ],
 });
 
 const User = mongoose.model("users", userSchema);
