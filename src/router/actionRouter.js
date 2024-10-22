@@ -9,6 +9,9 @@ router
   .route("/api/v1/notes")
   .get(authController.protect, actionController.getNotes);
 router
+  .route("/api/v1/notes/recents")
+  .get(authController.protect, actionController.getRecentNotes);
+router
   .route("/api/v1/notes/add")
   .post(authController.protect, actionController.addNotes);
 router

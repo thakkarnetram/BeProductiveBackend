@@ -19,6 +19,18 @@ exports.getNotes = asyncErrorHandler(async (req, res, next) => {
   }
 });
 
+exports.getRecentNotes = asyncErrorHandler(async (req, res, next) => {
+  const userEmail = req.user.email;
+  const notes = await Note.find({ email: userEmail })
+    .sort({ createdAt: -1 })
+    .limit(1);
+  if (!notes) {
+    return res.status(404).json({ message: "No Todos Found" });
+  } else {
+    return res.status(200).json(notes);
+  }
+});
+
 exports.addNotes = asyncErrorHandler(async (req, res, next) => {
   const { title, description } = req.body;
   const email = req.user.email;
@@ -189,11 +201,10 @@ exports.getWorkSpaceById = asyncErrorHandler(async (req, res, next) => {
 
 exports.getLatestSpace = asyncErrorHandler(async (req, res, next) => {
   const userId = req.user._id;
-  // Find the latest workspace for the specific user
   try {
     const latestWorkspace = await Workspace.find({ admin: userId })
-      .sort({ createdAt: -1 }) // Sort by creation date in descending order to get the latest
-      .limit(2); // Limit the result to one workspace (the latest)
+      .sort({ createdAt: -1 })
+      .limit(1); 
 
     if (!latestWorkspace) {
       return res
