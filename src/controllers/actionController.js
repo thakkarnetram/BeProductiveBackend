@@ -204,7 +204,7 @@ exports.getLatestSpace = asyncErrorHandler(async (req, res, next) => {
   try {
     const latestWorkspace = await Workspace.find({ admin: userId })
       .sort({ createdAt: -1 })
-      .limit(1); 
+      .limit(2); 
 
     if (!latestWorkspace) {
       return res
