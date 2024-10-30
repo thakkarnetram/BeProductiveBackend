@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const Otp = require("../models/Otp")
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const util = require("util");
@@ -127,6 +128,27 @@ exports.login = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+exports.loginUsingOtp = async (req,res) => {
+  try {
+    const {otp} = req.body;
+    if(!otp) {
+      return res.status(403).json({message:"Please enter otp"})
+    }
+    const otpRecord = await Otp.findOne({otp});
+    if(!otpRecord) {
+      return res.status(404).json({message:"Invalid Otp"})
+    } 
+    if(otpRecord.isUsed) {
+      return res.status(403).json({message:"Otp already used"})
+    }
+    otpRecord.isUsed=true;
+    await otpRecord.save();
+    return res.status(200).json({message:"Otp verified successfully"})
+  } catch (error) {
+    return res.status(500).json({message:`Internal Server Error ${error}`})
+  }
+}
 
 exports.verifyEmail = async (req, res) => {
   const { email } = req.query;
