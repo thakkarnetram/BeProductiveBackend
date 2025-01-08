@@ -226,7 +226,7 @@ exports.createWorkSpace = asyncErrorHandler(async (req, res, next) => {
   if (!workspace) {
     return res
       .status(400)
-      .json({ message: "Workspace & Projectname name cannot be empty" });
+      .json({ message: "Workspace name cannot be empty" });
   }
 
   try {
