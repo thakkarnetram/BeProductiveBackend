@@ -204,7 +204,7 @@ exports.getLatestSpace = asyncErrorHandler(async (req, res, next) => {
   try {
     const latestWorkspace = await Workspace.find({ admin: userId })
       .sort({ createdAt: -1 })
-      .limit(2); 
+      .limit(2);
 
     if (!latestWorkspace) {
       return res
@@ -223,33 +223,29 @@ exports.createWorkSpace = asyncErrorHandler(async (req, res, next) => {
   const userId = req.user._id;
   const { workspace, projectName } = req.body;
 
-  if (!workspace && !projectName) {
+  if (!workspace) {
     return res
       .status(400)
       .json({ message: "Workspace & Projectname name cannot be empty" });
   }
 
   try {
+    const trimmedSpace = workspace.trim().toLowerCase();
     const existingWorkspace = await Workspace.findOne({
-      workspace,
+      workspace: trimmedSpace,
     });
-    console.log(workspace);
     if (existingWorkspace) {
-      console.log("Inside log  " + existingWorkspace);
       return res.status(400).json({ message: "Workspace name already exists" });
     }
-
     // Create a new workspace
     const newWorkspace = new Workspace({
-      workspace,
+      workspace : trimmedSpace,
       projectName,
       admin: userId,
       members: [userId],
     });
-
     // Save the new workspace
     const savedWorkspace = await newWorkspace.save();
-    // TODO Before creating channel for the specific space need to make sure we dont save "" , instead create a general channel
     const newChannel = new Channel({
       channelName: projectName,
       workspace: {
