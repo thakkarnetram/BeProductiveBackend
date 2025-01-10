@@ -101,7 +101,7 @@ exports.getRecentTodos = asyncErrorHandler(async (req, res, next) => {
   }
 });
 
-exports.addTodos = async (req, res, next) => {
+exports.addTodos = asyncErrorHandler(async (req,res,next) => {
   const { todoTitle, todoDescription, todoPriority, todoStatus } = req.body;
   const email = req.user.email;
   if (!todoTitle) {
@@ -119,7 +119,7 @@ exports.addTodos = async (req, res, next) => {
     .then(() =>
       res.status(201).json({ message: `Todo added for ${email}`, newTodo })
     );
-};
+});
 
 exports.updateTodos = asyncErrorHandler(async (req, res, next) => {
   const _id = req.params._id;
