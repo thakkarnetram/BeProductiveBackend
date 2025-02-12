@@ -7,22 +7,35 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("views", path.join(__dirname, "src", "views"));
 app.set("view engine", "ejs");
-const authRoute = require("./src/router/authRoute");
-const actionRoute = require("./src/router/actionRouter");
-const otpRoute = require('./src/router/otpRouter')
+// Authentication & Authorization Route
+const authRoute = require("./src/router/user-auth/authRoute");
+const otpRoute = require('./src/router/user-auth/otpRouter');
+// User based action routes
+const todoRoute = require("./src/router/user-actions/todoRouter");
+const notesRoute = require("./src/router/user-actions/notesRouter");
+const channelRoute = require("./src/router/user-actions/channelRouter");
+const workSpaceRoute = require("./src/router/user-actions/workSpaceRouter");
+const inviteRoute = require("./src/router/user-actions/inviteRoute");
+const messageRoute = require("./src/router/user-actions/messageRouter");
+const profileRoute = require("./src/router/user-actions/profileRouter");
+// Server ping check route
 const pingRoute = require("./src/router/pingRoute");
-const profileRoute = require("./src/router/profileRouter");
-const inviteRoute = require("./src/router/inviteRoute");
-const messageRoute = require("./src/router/messageRouter");
-const feedBackRoute = require("./src/router/feedBackRouter");
-app.use("/", pingRoute);
-app.use("/", profileRoute);
-app.use("/", feedBackRoute);
-app.use("/", messageRoute);
+// Feedback route
+const feedBackRoute = require("./src/router/user-actions/feedBackRouter");
+// Authentication & Authorization endpoints
+app.use("/auth", authRoute);
 app.use("/",otpRoute);
-app.use("/auth", authRoute);
-app.use("/user", actionRoute);
-app.use("/auth", authRoute);
-app.use("/user", actionRoute);
+// User based actions endpoint
+app.use("/user", todoRoute);
+app.use("/user", notesRoute);
+app.use("/user", channelRoute);
+app.use("/user", workSpaceRoute);
 app.use("/invite", inviteRoute);
+app.use("/", profileRoute);
+app.use("/", messageRoute);
+// Server ping endpoint
+app.use("/", pingRoute);
+// Feedback endpoint
+app.use("/", feedBackRoute);
+
 module.exports = app;

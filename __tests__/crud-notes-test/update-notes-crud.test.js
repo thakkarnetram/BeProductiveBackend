@@ -1,6 +1,6 @@
 const request = require('supertest');
 const app = require('../../app');
-const authController = require('../../src/controllers/authController');
+const authController = require('../../src/controllers/user-auth/authController');
 const Notes = require('../../src/models/Notes')
 const Todos = require('../../src/models/Todos');
 const User = require('../../src/models/User');
