@@ -1,5 +1,5 @@
-const ToDo = require("../../models/Todos");
-const asyncErrorHandler = require("../../utils/AsyncErrorHandler");
+const ToDo = require("../../../models/Todos");
+const asyncErrorHandler = require("../../../utils/AsyncErrorHandler");
 
 //  TODOS SECTION
 exports.getTodos = asyncErrorHandler(async (req, res, next) => {

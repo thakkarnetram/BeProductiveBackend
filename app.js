@@ -11,17 +11,17 @@ app.set("view engine", "ejs");
 const authRoute = require("./src/router/user-auth/authRoute");
 const otpRoute = require('./src/router/user-auth/otpRouter');
 // User based action routes
-const todoRoute = require("./src/router/user-actions/todoRouter");
-const notesRoute = require("./src/router/user-actions/notesRouter");
-const channelRoute = require("./src/router/user-actions/channelRouter");
-const workSpaceRoute = require("./src/router/user-actions/workSpaceRouter");
-const inviteRoute = require("./src/router/user-actions/inviteRoute");
-const messageRoute = require("./src/router/user-actions/messageRouter");
-const profileRoute = require("./src/router/user-actions/profileRouter");
+const todoRoute = require("./src/router/user-actions/productivespace-routes/todoRouter");
+const notesRoute = require("./src/router/user-actions/productivespace-routes/notesRouter");
+const channelRoute = require("./src/router/user-actions/workspace-routes/channelRouter");
+const workSpaceRoute = require("./src/router/user-actions/workspace-routes/workSpaceRouter");
+const inviteRoute = require("./src/router/user-actions/workspace-routes/inviteRoute");
+const messageRoute = require("./src/router/user-actions/workspace-routes/messageRouter");
+const profileRoute = require("./src/router/user-actions/profilespace-routes/profileRouter");
 // Server ping check route
 const pingRoute = require("./src/router/pingRoute");
 // Feedback route
-const feedBackRoute = require("./src/router/user-actions/feedBackRouter");
+const feedBackRoute = require("./src/router/user-actions/profilespace-routes/feedBackRouter");
 // Authentication & Authorization endpoints
 app.use("/auth", authRoute);
 app.use("/",otpRoute);

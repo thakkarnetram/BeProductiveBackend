@@ -1,5 +1,5 @@
-const Note = require("../../models/Notes");
-const asyncErrorHandler = require("../../utils/AsyncErrorHandler");
+const Note = require("../../../models/Notes");
+const asyncErrorHandler = require("../../../utils/AsyncErrorHandler");
 
 //  NOTES SECTION
 exports.getNotes = asyncErrorHandler(async (req, res, next) => {

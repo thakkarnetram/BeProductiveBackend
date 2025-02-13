@@ -1,6 +1,6 @@
 const express = require("express");
-const todoController = require("../../controllers/user-actions/todoController");
-const authController = require("../../controllers/user-auth/authController");
+const todoController = require("../../../controllers/user-actions/productivespace-actions/todoController");
+const authController = require("../../../controllers/user-auth/authController");
 
 const router = express.Router();
 
