@@ -1,10 +1,10 @@
-const User = require("../models/User");
-const Otp = require("../models/Otp")
+const User = require("../../models/User");
+const Otp = require("../../models/Otp")
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const util = require("util");
 const nodemailer = require("nodemailer");
-const sendEmails = require("../utils/emailSender");
+const sendEmails = require("../../utils/emailSender");
 const { sign } = require("jsonwebtoken");
 
 require("dotenv").config({ path: `.env.${process.env.NODE_ENV}` });
@@ -138,7 +138,7 @@ exports.loginUsingOtp = async (req,res) => {
     const otpRecord = await Otp.findOne({otp});
     if(!otpRecord) {
       return res.status(404).json({message:"Invalid Otp"})
-    } 
+    }
     if(otpRecord.isUsed) {
       return res.status(403).json({message:"Otp already used"})
     }
