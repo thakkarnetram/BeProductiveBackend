@@ -1,6 +1,6 @@
 const express = require("express");
-const channelController = require("../../controllers/user-actions/channelController");
-const authController = require("../../controllers/user-auth/authController");
+const channelController = require("../../../controllers/user-actions/workspace-actions/channelController");
+const authController = require("../../../controllers/user-auth/authController");
 
 const router = express.Router();
 

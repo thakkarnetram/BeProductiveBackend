@@ -1,6 +1,6 @@
 const express = require("express");
-const feedBackController = require("../../controllers/user-actions/feedBackController");
-const authController = require("../../controllers/user-auth/authController");
+const feedBackController = require("../../../controllers/user-actions/profilespace-actions/feedBackController");
+const authController = require("../../../controllers/user-auth/authController");
 
 const router = express.Router();
 

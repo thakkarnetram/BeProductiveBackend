@@ -1,5 +1,5 @@
-const User = require("../../models/User");
-const asyncErrorHandler = require("../../utils/AsyncErrorHandler");
+const User = require("../../../models/User");
+const asyncErrorHandler = require("../../../utils/AsyncErrorHandler");
 
 exports.getProfileData = asyncErrorHandler(async (req, res, next) => {
   const _id = req.params._id;
