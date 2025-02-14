@@ -1,4 +1,4 @@
-require("./src/utils/mongoConnection");
+require("./src/utils/database-handler/mongoConnection");
 const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();

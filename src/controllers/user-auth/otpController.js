@@ -1,5 +1,5 @@
 const OtpModel = require("../../models/Otp")
-const emailSender = require("../../utils/emailSender")
+const emailSender = require("../../utils/email-handler/emailSender")
 
 function generateOtp () {
     return Math.floor(100000 + Math.random() * 900000).toString();

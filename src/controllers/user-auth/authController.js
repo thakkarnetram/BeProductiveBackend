@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const util = require("util");
 const nodemailer = require("nodemailer");
-const sendEmails = require("../../utils/emailSender");
+const sendEmails = require("../../utils/email-handler/emailSender");
 const { sign } = require("jsonwebtoken");
 
 require("dotenv").config({ path: `.env.${process.env.NODE_ENV}` });

@@ -4,11 +4,11 @@ const cors = require("cors");
 const path = require("path");
 const http = require("http");
 const { Server } = require("socket.io");
-const { socketLogic } = require("./src/utils/socket");
-const { initDBAndSocket } = require("./src/utils/mongoConnection");
+const { socketLogic } = require("./src/utils/socket-handler/socket");
+const { initDBAndSocket } = require("./src/utils/database-handler/mongoConnection");
 
 // Error handlers
-const CustomError = require("./src/utils/customError");
+const CustomError = require("./src/utils/error-handlers/customError");
 const GlobalError = require("./src/controllers/errorController");
 
 // Socket connection
@@ -24,7 +24,7 @@ const io = new Server(server, {
 // Socket logic
 socketLogic(io);
 
-// Mongo Connection & Io instance 
+// Mongo Connection & Io instance
 initDBAndSocket(io);
 
 // Middleware

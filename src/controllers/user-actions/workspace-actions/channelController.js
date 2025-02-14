@@ -1,6 +1,6 @@
 const Workspace = require("../../../models/Workspace");
 const Channel = require("../../../models/Channel");
-const asyncErrorHandler = require("../../../utils/AsyncErrorHandler");
+const asyncErrorHandler = require("../../../utils/error-handlers/AsyncErrorHandler");
 
 // CHANNEL SECTION
 exports.getChannels = asyncErrorHandler(async (req, res, next) => {
