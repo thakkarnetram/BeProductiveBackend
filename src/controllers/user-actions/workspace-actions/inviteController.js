@@ -2,7 +2,7 @@ const Invite = require("../../../models/Invite");
 const User = require("../../../models/User");
 const Workspace = require("../../../models/Workspace");
 const Channels = require("../../../models/Channel");
-const asyncErrorHandler = require("../../../utils/AsyncErrorHandler");
+const asyncErrorHandler = require("../../../utils/error-handlers/AsyncErrorHandler");
 
 // Endpoint
 exports.generateInviteLink = asyncErrorHandler(async (req, res, next) => {

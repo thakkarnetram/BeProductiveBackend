@@ -1,5 +1,5 @@
-const Message = require("../models/Message");
-const Channel = require("../models/Channel");
+const Message = require("../../models/Message");
+const Channel = require("../../models/Channel");
 let users = [];
 
 exports.socketLogic = (io) => {

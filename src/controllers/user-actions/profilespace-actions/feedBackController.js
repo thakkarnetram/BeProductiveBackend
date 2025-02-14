@@ -1,5 +1,5 @@
 const Feedback = require("../../../models/feedback");
-const asyncErrorHandler = require("../../../utils/AsyncErrorHandler");
+const asyncErrorHandler = require("../../../utils/error-handlers/AsyncErrorHandler");
 
 // FEEDBACK SECTION
 exports.addFeedback = asyncErrorHandler(async (req, res, next) => {

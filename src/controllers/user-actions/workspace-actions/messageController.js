@@ -1,5 +1,5 @@
 const Message = require("../../../models/Message");
-const asyncErrorHandler = require("../../../utils/AsyncErrorHandler");
+const asyncErrorHandler = require("../../../utils/error-handlers/AsyncErrorHandler");
 
 // MESSAGE SECTION
 exports.getChannelMessageById = asyncErrorHandler(async (req, res, next) => {
