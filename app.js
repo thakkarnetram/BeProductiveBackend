@@ -28,11 +28,11 @@ app.use("/",otpRoute);
 // User based actions endpoint
 app.use("/user", todoRoute);
 app.use("/user", notesRoute);
+app.use("/user", messageRoute);
 app.use("/user", channelRoute);
 app.use("/user", workSpaceRoute);
 app.use("/invite", inviteRoute);
 app.use("/", profileRoute);
-app.use("/", messageRoute);
 // Server ping endpoint
 app.use("/", pingRoute);
 // Feedback endpoint
