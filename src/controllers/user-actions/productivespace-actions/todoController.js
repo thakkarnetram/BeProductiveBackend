@@ -1,25 +1,26 @@
 const ToDo = require("../../../models/Todos");
-const redis = require('../../../utils/caching-handler/redisClient');
 const asyncErrorHandler = require("../../../utils/error-handlers/AsyncErrorHandler");
+const NodeCache = require("node-cache");
+const todoCache = new NodeCache({
+    stdTTL: 3600,
+    checkperiod: 1600
+});
+
 
 //  TODOS SECTION
 exports.getTodos = asyncErrorHandler(async (req, res, next) => {
     const userEmail = req.user.email;
-    const cacheKey = `todos:${userEmail}`;
     try {
-        if (!redis.isReady) {
-            console.warn('Redis client is not open');
-        } else {
-            const cachedNotes = await redis.get(cacheKey);
-            if (cachedNotes) {
-                return res.status(200).json(JSON.parse(cachedNotes));
-            }
-        }
-        const todos = await ToDo.find({email: userEmail});
+        let todos;
+        todos = await ToDo.find({email: userEmail});
         if (!todos) {
             return res.status(404).json({message: "No Todos Found"});
         }
-        await redis.setEx(cacheKey, 3600, JSON.stringify(todos))
+        if (todoCache.has(`todos:${userEmail}`)) {
+            todos = JSON.parse(todoCache.get(`todos:${userEmail}`));
+        } else {
+            todoCache.set(`todos:${userEmail}`, JSON.stringify(todos));
+        }
         return res.status(200).json(todos);
     } catch (err) {
         console.error('Error in getTodos', err);
@@ -29,23 +30,19 @@ exports.getTodos = asyncErrorHandler(async (req, res, next) => {
 
 exports.getRecentTodos = asyncErrorHandler(async (req, res, next) => {
     const userEmail = req.user.email;
-    const cacheKey = `recentTodos:${userEmail}`;
     try {
-        if (!redis.isReady) {
-            console.warn('Redis client is not ready');
-        } else {
-            const cachedTodos = await redis.get(cacheKey);
-            if (cachedTodos) {
-                return res.status(200).json(JSON.parse(cachedTodos));
-            }
-        }
-        const todos = await ToDo.find({email: userEmail})
+        let todos;
+        todos = await ToDo.find({email: userEmail})
             .sort({createdAt: -1})
             .limit(2);
         if (!todos) {
             return res.status(404).json({message: "No Todos Found"});
         }
-        await redis.setEx(cacheKey,3600,JSON.stringify(todos));
+        if (todoCache.has(`recentTodos:${userEmail}`)) {
+            todos = JSON.parse(todoCache.get(`recentTodos:${userEmail}`));
+        } else {
+            todoCache.set(`recentTodos:${userEmail}`, JSON.stringify(todos));
+        }
         return res.status(200).json(todos);
     } catch (err) {
         console.error('Error in server', err);
@@ -66,7 +63,8 @@ exports.addTodos = async (req, res, next) => {
         todoStatus,
         email,
     });
-    await redis.del(`todos:${email}`);
+    todoCache.del(`todos:${email}`);
+    todoCache.del(`recentTodos:${email}`);
     newTodo
         .save()
         .then(() =>
@@ -87,7 +85,8 @@ exports.updateTodos = asyncErrorHandler(async (req, res, next) => {
     // If the note exists and the email matches, perform the update
     const options = {new: true};
     const result = await ToDo.findByIdAndUpdate(_id, updatedTodo, options);
-    await redis.del(`todos:${email}`);
+    todoCache.del(`todos:${email}`);
+    todoCache.del(`recentTodos:${email}`);
     return res.status(200).json({message: `Todo updated for ${email}`, result});
 });
 
@@ -103,7 +102,8 @@ exports.deleteTodos = asyncErrorHandler(async (req, res, next) => {
     }
     // if note exists and email matches delete it
     const deletedTodo = await ToDo.findByIdAndDelete(_id);
-    await redis.del(`todos:${email}`);
+    todoCache.del(`todos:${email}`);
+    todoCache.del(`recentTodos:${email}`);
     return res
         .status(200)
         .json({message: `Todo deleted for ${email}`, deletedTodo});
