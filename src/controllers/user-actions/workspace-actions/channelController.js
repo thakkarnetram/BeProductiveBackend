@@ -1,25 +1,22 @@
 const Workspace = require("../../../models/Workspace");
 const Channel = require("../../../models/Channel");
-const redis = require("../../../utils/caching-handler/redisClient");
+const NodeCache = require("node-cache");
+const channelCache = new NodeCache({
+    stdTTL: 3600,
+    checkperiod: 1600
+});
+
 const asyncErrorHandler = require("../../../utils/error-handlers/AsyncErrorHandler");
 
 // CHANNEL SECTION
 exports.getChannels = asyncErrorHandler(async (req, res, next) => {
     const userId = req.user._id;
-    const cacheKey = `channels:${userId}`;
     if (!userId) {
         return res.status(400).json({ message: "User ID not found" });
     }
     try {
-        if(!redis.isReady) {
-            console.warn('Redis client not open')
-        } else {
-            const cachedChannels = await redis.get(cacheKey);
-            if(cachedChannels) {
-                return res.status(200).json(JSON.parse(cachedChannels));
-            }
-        }
-        const channels = await Channel.find({
+        let channels;
+         channels = await Channel.find({
             $or: [
                 { admin: userId }, // Channels where the user is the admin
                 { members: userId }, // Channels where the user is a member
@@ -30,7 +27,11 @@ exports.getChannels = asyncErrorHandler(async (req, res, next) => {
                 .status(404)
                 .json({ message: "No channels found! Create one." });
         }
-        await redis.setEx(cacheKey,3600,JSON.stringify(channels));
+        if(channelCache.has(`channels:${userId}`)) {
+            channels = JSON.parse(channelCache.get(`channels:${userId}`))
+        } else {
+            channelCache.set(`channels:${userId}`,JSON.stringify(channels))
+        }
         return res.status(200).json(channels);
     } catch (e) {
         console.error(e);
@@ -41,24 +42,20 @@ exports.getChannels = asyncErrorHandler(async (req, res, next) => {
 exports.getChannelById = asyncErrorHandler(async (req, res, next) => {
     const userId = req.user._id;
     const channelId = req.params._id;
-    const cacheKey = `channelById:${userId}`;
     if (!userId) {
         return res.status(400).json({ message: "User ID not found" });
     }
     try {
-        if(!redis.isReady) {
-            console.warn('Redis client not open')
-        } else {
-            const cachedChannel = await redis.get(cacheKey);
-            if(cachedChannel) {
-                return res.status(200).json(JSON.parse(cachedChannel))
-            }
-        }
-        const findChannel = await Channel.findById(channelId);
+        let findChannel;
+        findChannel = await Channel.findById(channelId);
         if (!findChannel) {
             return res.status(404).json({ message: "Channel not found" });
         }
-
+        if(channelCache.has(`channelById:${userId}`)) {
+            findChannel = JSON.parse(channelCache.get(`channelById:${userId}`))
+        } else {
+            channelCache.set(`channelById${userId}`,JSON.stringify(findChannel))
+        }
         // Check if the uscoer is either the admin or a member of the channel
         if (
             findChannel.admin.toString() !== userId &&
@@ -66,7 +63,6 @@ exports.getChannelById = asyncErrorHandler(async (req, res, next) => {
         ) {
             return res.status(403).json({ message: "Permission denied" });
         }
-        await redis.setEx(cacheKey,3600,JSON.stringify(findChannel))
         return res.status(200).json(findChannel);
     } catch (e) {
         console.error(e);
@@ -76,18 +72,10 @@ exports.getChannelById = asyncErrorHandler(async (req, res, next) => {
 
 exports.getLatestChannel = asyncErrorHandler(async (req, res, next) => {
     const userId = req.user._id;
-    const cacheKey = `latestChannel:${userId}`;
     // Find the latest workspace for the specific user
     try {
-        if(!redis.isReady) {
-            console.warn('Redis client not open')
-        } else {
-            const latestChannel = await redis.get(cacheKey);
-            if(latestChannel) {
-                return res.status(200).json(JSON.parse(latestChannel))
-            }
-        }
-        const latestChannel = await Channel.find({
+        let latestChannel;
+        latestChannel = await Channel.find({
             $or: [
                 { admin: userId }, // Channels where the user is the admin
                 { members: userId }, // Channels where the user is a member
@@ -99,7 +87,11 @@ exports.getLatestChannel = asyncErrorHandler(async (req, res, next) => {
         if (!latestChannel) {
             return res.status(404).json({ message: "No Channel found" });
         }
-        await redis.setEx(cacheKey,3600,JSON.stringify(latestChannel))
+        if(channelCache.has(`latestChannel:${userId}`)) {
+            latestChannel = JSON.parse(channelCache.get(`latestChannel:$userId`))
+        } else {
+            channelCache.set(`latestChannel:${userId}`,JSON.stringify(latestChannel))
+        }
         return res.status(200).json(latestChannel);
     } catch (e) {
         console.log(e);
@@ -130,9 +122,9 @@ exports.createChannel = asyncErrorHandler(async (req, res, next) => {
             _id: newChannel._id,
             channelName: newChannel.channelName,
         });
-        await redis.del( `latestChannel:${userId}`);
-        await redis.del( `channels:${userId}`);
-        await redis.del( `channelById:${userId}`);
+        channelCache.del( `latestChannel:${userId}`);
+        channelCache.del( `channels:${userId}`);
+        channelCache.del( `channelById:${userId}`);
         await workspace.save();
         return res.status(201).json({ message: "Channel Created", newChannel });
     } catch (e) {
