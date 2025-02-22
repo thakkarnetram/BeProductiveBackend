@@ -2,7 +2,7 @@ const authRateLimiter = require('express-rate-limit');
 
 exports.loginLimit = authRateLimiter({
     windowMs: 10 * 60 * 1000, // every 10 minutes
-    limit: 5,
+    limit: 10,
     standardHeaders: true,
     legacyHeaders: false,
     skipSuccessfulRequests: false,
@@ -13,7 +13,7 @@ exports.loginLimit = authRateLimiter({
 
 exports.registerLimit = authRateLimiter({
     windowMs: 5 * 60 * 1000, // every 5 minutes
-    limit: 2,
+    limit: 10,
     standardHeaders: true,
     legacyHeaders: false,
     skipSuccessfulRequests: false,
@@ -24,7 +24,7 @@ exports.registerLimit = authRateLimiter({
 
 exports.verifyEmailLimit = authRateLimiter({
     windowMs: 60 * 1000, // every 1 minute
-    limit: 1,
+    limit: 3,
     standardHeaders: true,
     legacyHeaders: false,
     skipSuccessfulRequests: false,
@@ -35,7 +35,7 @@ exports.verifyEmailLimit = authRateLimiter({
 
 exports.resetPasswordGenerateLinkLimit = authRateLimiter({
     windowMs: 60 * 1000, // every 1 minute
-    limit: 1,
+    limit: 3,
     standardHeaders: true,
     legacyHeaders: false,
     skipSuccessfulRequests: false,
@@ -46,7 +46,7 @@ exports.resetPasswordGenerateLinkLimit = authRateLimiter({
 
 exports.resetPasswordPageLimit = authRateLimiter({
     windowMs: 20 * 60 * 1000, // every 2 minutes
-    limit: 2,
+    limit: 3,
     standardHeaders: true,
     legacyHeaders: false,
     skipSuccessfulRequests: false,
@@ -57,7 +57,7 @@ exports.resetPasswordPageLimit = authRateLimiter({
 
 exports.resetPasswordUpdatingLimit = authRateLimiter({
     windowMs: 60 * 1000, // every 1 minute
-    limit: 1,
+    limit: 3,
     standardHeaders: true,
     legacyHeaders: false,
     skipSuccessfulRequests: false,
