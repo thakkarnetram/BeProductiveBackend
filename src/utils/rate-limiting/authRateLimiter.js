@@ -65,3 +65,25 @@ exports.resetPasswordUpdatingLimit = authRateLimiter({
         error: 'Too many requests please try again after a minute !'
     }
 })
+
+exports.requestingOtpLimiter = authRateLimiter({
+    windowMs: 60 * 1000, // every 1 minute
+    limit: 3,
+    standardHeaders: true,
+    legacyHeaders: false,
+    skipSuccessfulRequests: false,
+    message: {
+        error: 'Too many requests please try again after a minute !'
+    }
+})
+
+exports.sendingOtpLimiter = authRateLimiter({
+    windowMs: 60 * 1000, // every 1 minute
+    limit: 3,
+    standardHeaders: true,
+    legacyHeaders: false,
+    skipSuccessfulRequests: false,
+    message: {
+        error: 'Too many requests please try again after a minute !'
+    }
+})
