@@ -30,3 +30,4 @@ jobs:
           author_email: thakkarnetram10@gmail.com
           message: "chore: update CHANGELOG.md [skip ci]"
           add: CHANGELOG.md
+          token: ${{ secrets.ACTION_TOKEN }}
