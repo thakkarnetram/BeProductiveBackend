@@ -6,6 +6,7 @@ const workspaceCache = new NodeCache({
     checkperiod: 1600
 });
 const asyncErrorHandler = require("../../../utils/error-handlers/AsyncErrorHandler");
+const {async} = require("seed");
 
 // WORKSPACE SECTION
 exports.getWorkSpaces = asyncErrorHandler(async (req, res, next) => {
@@ -25,10 +26,10 @@ exports.getWorkSpaces = asyncErrorHandler(async (req, res, next) => {
                 .status(404)
                 .json({message: "No WorkSpaces found ! Create One "});
         }
-        if(workspaceCache.has(`workspaces:${userId}`)) {
-            workspaces =  JSON.parse(workspaceCache.get(`workspaces:${userId}`))
+        if (workspaceCache.has(`workspaces:${userId}`)) {
+            workspaces = JSON.parse(workspaceCache.get(`workspaces:${userId}`))
         } else {
-            workspaceCache.set(`workspaces:${userId}`,JSON.stringify(workspaces))
+            workspaceCache.set(`workspaces:${userId}`, JSON.stringify(workspaces))
         }
         return res.status(200).json(workspaces);
 
@@ -50,10 +51,10 @@ exports.getWorkSpaceById = asyncErrorHandler(async (req, res, next) => {
         if (!findSpace) {
             return res.status(404).json({message: "Workspace not Found"});
         }
-        if(workspaceCache.has(`workspaceById:${userId}`)) {
+        if (workspaceCache.has(`workspaceById:${userId}`)) {
             findSpace = JSON.parse(workspaceCache.get(`workspaceById:${userId}`))
         } else {
-            workspaceCache.set(`workspaceById:${userId}`,JSON.stringify(findSpace))
+            workspaceCache.set(`workspaceById:${userId}`, JSON.stringify(findSpace))
         }
         return res.status(200).json(findSpace);
     } catch (e) {
@@ -74,10 +75,10 @@ exports.getLatestSpace = asyncErrorHandler(async (req, res, next) => {
                 .status(404)
                 .json({message: "No WorkSpace found for this user. Create one."});
         }
-        if(workspaceCache.has(`latestWorkspace:${userId}`)) {
+        if (workspaceCache.has(`latestWorkspace:${userId}`)) {
             latestWorkspace = JSON.parse(workspaceCache.get(`latestWorkspace:${userId}`))
         } else {
-            workspaceCache.set(`latestWorkspace:${userId}`,JSON.stringify(latestWorkspace))
+            workspaceCache.set(`latestWorkspace:${userId}`, JSON.stringify(latestWorkspace))
         }
         return res.status(200).json(latestWorkspace);
     } catch (e) {
@@ -145,3 +146,48 @@ exports.createWorkSpace = asyncErrorHandler(async (req, res, next) => {
 });
 
 // TODO UPDATE WORKSPACE NAME & DELETE A WORKSPACE
+exports.updateWorkspace = asyncErrorHandler(async (req, res, next) => {
+    const _id = req.params._id;
+    const admin = req.user._id;
+    const updatedWorkspace = req.body.workspace;
+    if (!updatedWorkspace) {
+        return res.status(400).json({message: 'Please provided a workspace name'})
+    }
+    try {
+        const workspace = await Workspace.findOne({_id, admin});
+        console.log(workspace)
+        if (!workspace) {
+            return res.status(403).json({message: 'Unauthorized to update workspace'})
+        }
+        const options = {new: true};
+        const update = await Workspace.findByIdAndUpdate(
+            _id,
+            {workspace: updatedWorkspace},
+            options
+        );
+        workspaceCache.del(`workspaces:${admin}`)
+        workspaceCache.del(`workspaceById:${admin}`)
+        workspaceCache.del(`latestWorkspace:${admin}`)
+        return res.status(200).json({message: 'Workspace name updated !', update})
+    } catch (err) {
+        return res.status(501).json({message: `Internal Server error ${err}`})
+    }
+})
+
+exports.deleteWorkspace = asyncErrorHandler(async (req, res, next) => {
+    const _id = req.params._id;
+    const admin = req.user._id;
+    try {
+        const findSpace = await Workspace.findOne({_id, admin});
+        if (!findSpace) {
+            return res.status(403).json({message: 'Unauthorized to delete the space'})
+        }
+        const deleteSpace = await Workspace.findByIdAndDelete({_id, admin});
+        workspaceCache.del(`workspaces:${admin}`)
+        workspaceCache.del(`workspaceById:${admin}`)
+        workspaceCache.del(`latestWorkspace:${admin}`)
+        return res.status(200).json({message: "Workspace deleted ", deleteSpace})
+    } catch (err) {
+        return res.status(501).json({message: `Internal server error ${err}`})
+    }
+})
