@@ -3,9 +3,12 @@ permissions:
 
 name: Changelog Track
 on:
+  pull_request:
+    branches:
+      - main
   push:
     branches:
-      - changelog-test
+      - main
 
 jobs:
   update-changelog:
