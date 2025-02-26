@@ -19,5 +19,11 @@ router
 router
     .route("/api/v1/workspace/add")
     .post(workspaceLimit.addWorkspaceLimit, authController.protect, workSpaceController.createWorkSpace);
+router
+    .route("/api/v1/workspace/update/:_id")
+    .put(workspaceLimit.workSpaceLimit, authController.protect, workSpaceController.updateWorkspace);
+router
+    .route("/api/v1/workspace/delete/:_id")
+    .delete(workspaceLimit.workSpaceLimit, authController.protect, workSpaceController.deleteWorkspace);
 
 module.exports = router;
