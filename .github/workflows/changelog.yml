@@ -28,5 +28,5 @@ jobs:
         with:
           author_name: thakkarnetram
           author_email: thakkarnetram10@gmail.com
-          message: " update CHANGELOG.md [ skip ci ]"
+          message: "chore: update CHANGELOG.md [ skip ci ]"
           add: CHANGELOG.md
