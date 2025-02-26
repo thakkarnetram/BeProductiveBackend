@@ -1,0 +1,32 @@
+name: Changelog Track
+on:
+  push:
+    branches:
+      - changelog-test
+
+jobs:
+  update-changelog:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Code checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install Dependencies
+        run: npm i
+
+      - name: Update changelog
+        run: npm run changelog
+
+      - name: Commit changelog changes
+        uses: EndBug/add-and-commit@v9
+        with:
+          author_name: thakkarnetram
+          author_email: thakkarnetram10@gmail.com
+          message: " update CHANGELOG.md [ skip ci ]"
+          add: CHANGELOG.md
