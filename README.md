@@ -1,5 +1,11 @@
 # BeProductiveBackend
+
+# For Contribution 
 <h3><a href="./CONTRIBUTING.md">For Collaborating in this Project </a></h3>
+
+# CHANGELOG
+<h3><a href="./CHANGELOG.md"> Changes in API's [ features , fixes , updates ] </a></h3>
+
 <hr>
 Main repo -> https://github.com/thakkarnetram/Productivity-App
 <br>
