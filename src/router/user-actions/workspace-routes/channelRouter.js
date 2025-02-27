@@ -18,5 +18,11 @@ router
 router
     .route("/api/v1/channel/add/:_id")
     .post(channelLimiter.addChannelLimit, authController.protect, channelController.createChannel);
+router
+    .route("/api/v1/channel/update/:_id")
+    .put(channelLimiter.getChannelLimit, authController.protect, channelController.updateChannel);
+router
+    .route("/api/v1/channel/delete/:_id")
+    .delete(channelLimiter.getChannelLimit, authController.protect, channelController.deleteChannel);
 
 module.exports = router;
