@@ -7,7 +7,7 @@ const channelCache = new NodeCache({
 });
 
 const asyncErrorHandler = require("../../../utils/error-handlers/AsyncErrorHandler");
-const {async} = require("seed");
+
 
 // CHANNEL SECTION
 exports.getChannels = asyncErrorHandler(async (req, res, next) => {

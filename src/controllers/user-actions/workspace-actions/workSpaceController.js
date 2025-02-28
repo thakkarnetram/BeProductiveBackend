@@ -6,7 +6,7 @@ const workspaceCache = new NodeCache({
     checkperiod: 1600
 });
 const asyncErrorHandler = require("../../../utils/error-handlers/AsyncErrorHandler");
-const {async} = require("seed");
+
 
 // WORKSPACE SECTION
 exports.getWorkSpaces = asyncErrorHandler(async (req, res, next) => {
