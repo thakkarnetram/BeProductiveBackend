@@ -15,10 +15,10 @@ exports.getChannelMessageById = asyncErrorHandler(async (req, res, next) => {
     try {
         let messages;
         messages = await Message.find({channel});
-        if(messageCache.has(`messages:${channel}`)) {
+        if (messageCache.has(`messages:${channel}`)) {
             messages = JSON.parse(messageCache.get(`messages:${channel}`))
         } else {
-            messageCache.set(`message:${channel}`,JSON.stringify(messages))
+            messageCache.set(`messages:${channel}`, JSON.stringify(messages))
         }
         if (!messages) {
             return res
