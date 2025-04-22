@@ -10,7 +10,7 @@ router
     .get(todoLimiter.getTodoLimit, authController.protect, todoController.getTodos);
 router
     .route("/api/v1/todos/recents")
-    .get(todoLimiter.getRecentTodoLimit, authController.protect, todoController.getRecentTodos);
+    .get(authController.protect, todoController.getRecentTodos);
 router
     .route("/api/v1/todos/add")
     .post(todoLimiter.addTodoLimit, authController.protect, todoController.addTodos);

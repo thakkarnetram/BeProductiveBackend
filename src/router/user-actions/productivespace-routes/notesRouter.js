@@ -11,7 +11,7 @@ router
     .get(noteLimiter.getNotesLimit, authController.protect, noteController.getNotes);
 router
     .route("/api/v1/notes/recents")
-    .get(noteLimiter.getRecentNoteLimit, authController.protect, noteController.getRecentNotes);
+    .get(authController.protect, noteController.getRecentNotes);
 router
     .route("/api/v1/notes/add")
     .post(noteLimiter.addNoteLimit, authController.protect, noteController.addNotes);
