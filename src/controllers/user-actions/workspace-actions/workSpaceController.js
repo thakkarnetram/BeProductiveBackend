@@ -51,10 +51,10 @@ exports.getWorkSpaceById = asyncErrorHandler(async (req, res, next) => {
         if (!findSpace) {
             return res.status(404).json({message: "Workspace not Found"});
         }
-        if (workspaceCache.has(`workspaceById:${userId}`)) {
-            findSpace = JSON.parse(workspaceCache.get(`workspaceById:${userId}`))
+        if (workspaceCache.has(`workspaceById:${userId}:${spaceId}`)) {
+            findSpace = JSON.parse(workspaceCache.get(`workspaceById:${userId}:${spaceId}`))
         } else {
-            workspaceCache.set(`workspaceById:${userId}`, JSON.stringify(findSpace))
+            workspaceCache.set(`workspaceById:${userId}:${spaceId}`, JSON.stringify(findSpace))
         }
         return res.status(200).json(findSpace);
     } catch (e) {
