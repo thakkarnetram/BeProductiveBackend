@@ -1,113 +1,107 @@
 const Workspace = require("../../../models/Workspace");
 const Channel = require("../../../models/Channel");
 const NodeCache = require("node-cache");
-const workspaceCache = new NodeCache({
-    stdTTL: 3600,
-    checkperiod: 1600
-});
+const workspaceCache = new NodeCache({ stdTTL: 3600, checkperiod: 1600 });
 const asyncErrorHandler = require("../../../utils/error-handlers/AsyncErrorHandler");
 
-
 // WORKSPACE SECTION
+
 exports.getWorkSpaces = asyncErrorHandler(async (req, res, next) => {
     const userId = req.user._id;
-    // find all workspaces
-    try {
-        let workspaces;
-        workspaces = await Workspace.find({
-            $or: [
-                // space where the user is the admin or user is a member
-                {admin: userId},
-                {members: userId},
-            ],
-        });
-        if (workspaces.length === 0) {
-            return res
-                .status(404)
-                .json({message: "No WorkSpaces found ! Create One "});
-        }
-        if (workspaceCache.has(`workspaces:${userId}`)) {
-            workspaces = JSON.parse(workspaceCache.get(`workspaces:${userId}`))
-        } else {
-            workspaceCache.set(`workspaces:${userId}`, JSON.stringify(workspaces))
-        }
-        return res.status(200).json(workspaces);
+    const cacheKey = `workspaces:${userId}`;
 
+    if (workspaceCache.has(cacheKey)) {
+        const cached = JSON.parse(workspaceCache.get(cacheKey));
+        return res.status(200).json(cached);
+    }
+
+    try {
+        const workspaces = await Workspace.find({
+            $or: [{ admin: userId }, { members: userId }],
+        });
+
+        if (workspaces.length === 0) {
+            return res.status(404).json({ message: "No WorkSpaces found ! Create One " });
+        }
+
+        workspaceCache.set(cacheKey, JSON.stringify(workspaces));
+        return res.status(200).json(workspaces);
     } catch (e) {
         console.log(e);
-        return res.status(501).json({message: "Internal server error"});
+        return res.status(501).json({ message: "Internal server error" });
     }
 });
 
 exports.getWorkSpaceById = asyncErrorHandler(async (req, res, next) => {
     const userId = req.user._id;
     const spaceId = req.params._id;
+    const cacheKey = `workspaceById:${userId}:${spaceId}`;
+
     if (!userId) {
-        return res.status(400).json({message: "User ID not found"});
+        return res.status(400).json({ message: "User ID not found" });
     }
+
+    if (workspaceCache.has(cacheKey)) {
+        const cached = JSON.parse(workspaceCache.get(cacheKey));
+        return res.status(200).json(cached);
+    }
+
     try {
-        let findSpace;
-        findSpace = await Workspace.findById({_id: spaceId});
+        const findSpace = await Workspace.findById(spaceId);
+
         if (!findSpace) {
-            return res.status(404).json({message: "Workspace not Found"});
+            return res.status(404).json({ message: "Workspace not Found" });
         }
-        if (workspaceCache.has(`workspaceById:${userId}:${spaceId}`)) {
-            findSpace = JSON.parse(workspaceCache.get(`workspaceById:${userId}:${spaceId}`))
-        } else {
-            workspaceCache.set(`workspaceById:${userId}:${spaceId}`, JSON.stringify(findSpace))
-        }
+
+        workspaceCache.set(cacheKey, JSON.stringify(findSpace));
         return res.status(200).json(findSpace);
     } catch (e) {
         console.log(e);
-        return res.status(500).json({message: "Internal Server Error"});
+        return res.status(500).json({ message: "Internal Server Error" });
     }
 });
 
 exports.getLatestSpace = asyncErrorHandler(async (req, res, next) => {
     const userId = req.user._id;
+    const cacheKey = `latestWorkspace:${userId}`;
+
+    if (workspaceCache.has(cacheKey)) {
+        const cached = JSON.parse(workspaceCache.get(cacheKey));
+        return res.status(200).json(cached);
+    }
+
     try {
-        let latestWorkspace;
-        latestWorkspace = await Workspace.find({admin: userId})
-            .sort({createdAt: -1})
+        const latestWorkspace = await Workspace.find({ admin: userId })
+            .sort({ createdAt: -1 })
             .limit(2);
-        if (!latestWorkspace) {
-            return res
-                .status(404)
-                .json({message: "No WorkSpace found for this user. Create one."});
+
+        if (!latestWorkspace || latestWorkspace.length === 0) {
+            return res.status(404).json({ message: "No WorkSpace found for this user. Create one." });
         }
-        if (workspaceCache.has(`latestWorkspace:${userId}`)) {
-            latestWorkspace = JSON.parse(workspaceCache.get(`latestWorkspace:${userId}`))
-        } else {
-            workspaceCache.set(`latestWorkspace:${userId}`, JSON.stringify(latestWorkspace))
-        }
+
+        workspaceCache.set(cacheKey, JSON.stringify(latestWorkspace));
         return res.status(200).json(latestWorkspace);
     } catch (e) {
         console.log(e);
-        return res.status(500).json({message: "Internal server error"});
+        return res.status(500).json({ message: "Internal server error" });
     }
 });
 
 exports.createWorkSpace = asyncErrorHandler(async (req, res, next) => {
     const userId = req.user._id;
-    const {workspace, projectName} = req.body;
+    const { workspace, projectName } = req.body;
 
     if (!workspace && !projectName) {
-        return res
-            .status(400)
-            .json({message: "Workspace & Projectname name cannot be empty"});
+        return res.status(400).json({ message: "Workspace & Projectname name cannot be empty" });
     }
 
     try {
-        const existingWorkspace = await Workspace.findOne({
-            workspace,
-        });
-        console.log(workspace);
+        const existingWorkspace = await Workspace.findOne({ workspace });
+
         if (existingWorkspace) {
-            console.log("Inside log  " + existingWorkspace);
-            return res.status(400).json({message: "Workspace name already exists"});
+            return res.status(400).json({ message: "Workspace name already exists" });
         }
 
-        // Create a new workspace
         const newWorkspace = new Workspace({
             workspace,
             projectName,
@@ -115,8 +109,8 @@ exports.createWorkSpace = asyncErrorHandler(async (req, res, next) => {
             members: [userId],
         });
 
-        // Save the new workspace
         const savedWorkspace = await newWorkspace.save();
+
         const newChannel = new Channel({
             channelName: projectName,
             workspace: {
@@ -125,69 +119,79 @@ exports.createWorkSpace = asyncErrorHandler(async (req, res, next) => {
             },
             admin: userId,
         });
-        // Save the new channel
+
         await newChannel.save();
 
-        // Add the channel ID and channelName to the workspace's channels array
         savedWorkspace.channels.push({
             _id: newChannel._id,
             channelName: newChannel.channelName,
         });
-        workspaceCache.del(`workspaces:${userId}`)
-        workspaceCache.del(`workspaceById:${userId}`)
-        workspaceCache.del(`latestWorkspace:${userId}`)
+
+        // Invalidate relevant cache
+        workspaceCache.del(`workspaces:${userId}`);
+        workspaceCache.del(`latestWorkspace:${userId}`);
+
         await savedWorkspace.save();
 
         return res.status(201).json(savedWorkspace);
     } catch (e) {
         console.error(e);
-        return res.status(501).json({message: "Internal server error"});
+        return res.status(501).json({ message: "Internal server error" });
     }
 });
 
-// TODO UPDATE WORKSPACE NAME & DELETE A WORKSPACE
 exports.updateWorkspace = asyncErrorHandler(async (req, res, next) => {
     const _id = req.params._id;
     const admin = req.user._id;
     const updatedWorkspace = req.body.workspace;
+
     if (!updatedWorkspace) {
-        return res.status(400).json({message: 'Please provided a workspace name'})
+        return res.status(400).json({ message: 'Please provide a workspace name' });
     }
+
     try {
-        const workspace = await Workspace.findOne({_id, admin});
-        console.log(workspace)
+        const workspace = await Workspace.findOne({ _id, admin });
         if (!workspace) {
-            return res.status(403).json({message: 'Unauthorized to update workspace'})
+            return res.status(403).json({ message: 'Unauthorized to update workspace' });
         }
-        const options = {new: true};
+
+        const options = { new: true };
         const update = await Workspace.findByIdAndUpdate(
             _id,
-            {workspace: updatedWorkspace},
+            { workspace: updatedWorkspace },
             options
         );
-        workspaceCache.del(`workspaces:${admin}`)
-        workspaceCache.del(`workspaceById:${admin}`)
-        workspaceCache.del(`latestWorkspace:${admin}`)
-        return res.status(200).json({message: 'Workspace name updated !', update})
+
+        // Invalidate relevant cache
+        workspaceCache.del(`workspaces:${admin}`);
+        workspaceCache.del(`latestWorkspace:${admin}`);
+        workspaceCache.del(`workspaceById:${admin}:${_id}`);
+
+        return res.status(200).json({ message: 'Workspace name updated!', update });
     } catch (err) {
-        return res.status(501).json({message: `Internal Server error ${err}`})
+        return res.status(501).json({ message: `Internal Server error ${err}` });
     }
-})
+});
 
 exports.deleteWorkspace = asyncErrorHandler(async (req, res, next) => {
     const _id = req.params._id;
     const admin = req.user._id;
+
     try {
-        const findSpace = await Workspace.findOne({_id, admin});
+        const findSpace = await Workspace.findOne({ _id, admin });
         if (!findSpace) {
-            return res.status(403).json({message: 'Unauthorized to delete the space'})
+            return res.status(403).json({ message: 'Unauthorized to delete the space' });
         }
-        const deleteSpace = await Workspace.findByIdAndDelete({_id, admin});
-        workspaceCache.del(`workspaces:${admin}`)
-        workspaceCache.del(`workspaceById:${admin}`)
-        workspaceCache.del(`latestWorkspace:${admin}`)
-        return res.status(200).json({message: "Workspace deleted ", deleteSpace})
+
+        const deleteSpace = await Workspace.findByIdAndDelete({ _id, admin });
+
+        // Invalidate relevant cache
+        workspaceCache.del(`workspaces:${admin}`);
+        workspaceCache.del(`latestWorkspace:${admin}`);
+        workspaceCache.del(`workspaceById:${admin}:${_id}`);
+
+        return res.status(200).json({ message: "Workspace deleted", deleteSpace });
     } catch (err) {
-        return res.status(501).json({message: `Internal server error ${err}`})
+        return res.status(501).json({ message: `Internal server error ${err}` });
     }
-})
+});
