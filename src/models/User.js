@@ -37,6 +37,10 @@ const userSchema = new mongoose.Schema({
       ref: "users",
     },
   ],
+  fcmTokens: [
+      { type: String }
+  ]
+
 });
 
 const User = mongoose.model("users", userSchema);

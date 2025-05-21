@@ -13,6 +13,8 @@ router
     .route("/api/v1/reset/:_id")
     .get(rateLimiter.resetPasswordPageLimit, authController.resetPassword)
     .post(rateLimiter.resetPasswordUpdatingLimit, authController.handlePasswordReset);
-
+router
+    .route("/api/v1/fcm")
+    .post(authController.protect,authController.addFcmToken);
 
 module.exports = router;
