@@ -6,7 +6,7 @@ config/secret.json
 # dependencies
 node_modules
 
-/src/be-productive.json
+/src/be-productive-dev-sdk-admin.json
 
 # testing
 coverage
