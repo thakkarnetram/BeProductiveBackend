@@ -16,5 +16,8 @@ router
 router
     .route("/api/v1/fcm")
     .post(authController.protect,authController.addFcmToken);
+router
+    .route("/api/v1/fcm/remove")
+    .post(authController.protect,authController.removeFcmToken);
 
 module.exports = router;
