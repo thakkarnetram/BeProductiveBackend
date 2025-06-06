@@ -1,5 +1,5 @@
 const firebaseAdmin = require('firebase-admin');
-const devAccount = require('../../be-productive-dev-firebase-adminsdk-fbsvc-cea0a40335.json');
+const devAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
 firebaseAdmin.initializeApp({
     credential:firebaseAdmin.credential.cert(devAccount)
 })
