@@ -241,6 +241,22 @@ exports.handlePasswordReset = async (req, res) => {
     }
 };
 
+exports.getUserNameById = async (req,res) => {
+    try {
+        const {userIds} = req.body;
+        if (!Array.isArray(userIds)) {
+            return res.status(400).json({message:"User Id should be an array"})
+        }
+        const users = await User.find(
+            { _id: { $in: userIds } },
+            '_id username name'
+        );
+        return res.status(200).json(users)
+    } catch (err) {
+        return res.status(501).json({message: err})
+    }
+}
+
 exports.addFcmToken = async (req, res) => {
     try {
         const {fcm} = req.body;

@@ -14,6 +14,9 @@ router
     .get(rateLimiter.resetPasswordPageLimit, authController.resetPassword)
     .post(rateLimiter.resetPasswordUpdatingLimit, authController.handlePasswordReset);
 router
+    .route("/api/v1/user-details")
+    .post(authController.protect,authController.getUserNameById);
+router
     .route("/api/v1/fcm")
     .post(authController.protect,authController.addFcmToken);
 router
