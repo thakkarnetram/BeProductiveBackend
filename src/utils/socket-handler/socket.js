@@ -87,6 +87,43 @@ exports.socketLogic = (io) => {
           }
         }
 
+        const mentionUsernames = [...msg.text.matchAll(/@(\w+)/g)].map(m => m[1]);
+
+        if (mentionUsernames.length > 0) {
+          // Find users with these usernames
+          const mentionedUsers = await User.find({
+            username: { $in: mentionUsernames },
+          }).select("_id username fcmTokens");
+
+          // Send mention-specific notification
+          for (const user of mentionedUsers) {
+            if (
+                user.fcmTokens &&
+                user.fcmTokens.length > 0 &&
+                user._id.toString() !== senderId // avoid notifying sender
+            ) {
+              for (const token of user.fcmTokens) {
+                try {
+                  await admin.messaging().send({
+                    token,
+                    notification: {
+                      title: `You were mentioned by ${senderName}`,
+                      body: msg.text,
+                    },
+                    data: {
+                      channelId: msg.channel,
+                      sentBy: msg.sentBy,
+                      type: "mention",
+                    },
+                  });
+                } catch (err) {
+                  console.log("Mention FCM error for token:", token, err.message);
+                }
+              }
+            }
+          }
+        }
+
       } catch (e) {
         console.log("Chat message error:", e);
       }
