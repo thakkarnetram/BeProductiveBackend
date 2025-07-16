@@ -59,36 +59,15 @@ exports.socketLogic = (io) => {
           select: "_id fcmTokens"
         });
 
-        // Filter out sender from notification recipients
+         /*here there are 2 conditions for sending notifications
+         * 1. If the user has @ mention only that notification / device would get the notification
+         * 2. If there's a normal message everyone gets the notification
+         * */
+
         const recipients = channel.members.filter(
             (user) => user._id.toString() !== senderId
         );
-
-        // Send FCM notifications
-        for (const user of recipients) {
-          if (user.fcmTokens && user.fcmTokens.length > 0) {
-            for (const token of user.fcmTokens) {
-              try {
-                await admin.messaging().send({
-                  token,
-                  notification: {
-                    title: `${senderName || 'New Message'}`,
-                    body: msg.text,
-                  },
-                  data: {
-                    channelId: msg.channel,
-                    sentBy: msg.sentBy,
-                  },
-                });
-              } catch (err) {
-                console.log("FCM error for token:", token, err.message);
-              }
-            }
-          }
-        }
-
         const mentionUsernames = [...msg.text.matchAll(/@(\w+)/g)].map(m => m[1]);
-
         if (mentionUsernames.length > 0) {
           // Find users with these usernames
           const mentionedUsers = await User.find({
@@ -118,6 +97,29 @@ exports.socketLogic = (io) => {
                   });
                 } catch (err) {
                   console.log("Mention FCM error for token:", token, err.message);
+                }
+              }
+            }
+          }
+        } else if (recipients.length>0) {
+          // Send FCM notifications
+          for (const user of recipients) {
+            if (user.fcmTokens && user.fcmTokens.length > 0) {
+              for (const token of user.fcmTokens) {
+                try {
+                  await admin.messaging().send({
+                    token,
+                    notification: {
+                      title: `${senderName || 'New Message'}`,
+                      body: msg.text,
+                    },
+                    data: {
+                      channelId: msg.channel,
+                      sentBy: msg.sentBy,
+                    },
+                  });
+                } catch (err) {
+                  console.log("FCM error for token:", token, err.message);
                 }
               }
             }
