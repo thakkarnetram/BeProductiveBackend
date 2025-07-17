@@ -1,33 +1,36 @@
 const mongoose = require("mongoose")
 
 const notificationSchema = new mongoose.Schema({
-    userId:{
+    senderId:{
+      type:String,
+      ref:"users"
+    },
+    senderName:{
         type:String,
         required:true,
-        ref:"users"
     },
-    type:{
+    channelName : {
         type:String,
-        enum:["mention","message","system"],
-        default:"message"
+        required:true
     },
-    title: {
-        type:String
+    message:{
+        type:String,
+        required:true
     },
-    body: {
-        type:String
+    receiverId:{
+        type:String,
+        ref:"users",
+        required:true
     },
-    data: {
-        type:Object
+    notificationType:{
+        type:String,
+        enum:["mention","message"],
+        required:true
     },
-    isRead: {
-        type: Boolean,
-        default: false
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now
-    },
+    createdAt:{
+        type: String,
+        default: () => new Date().toLocaleTimeString(),
+    }
 })
 
 module.exports = mongoose.model("notifications",notificationSchema)

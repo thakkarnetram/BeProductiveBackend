@@ -1,6 +1,7 @@
 const Message = require("../../models/Message");
 const Channel = require("../../models/Channel");
 const User = require("../../models/User");
+const Notification = require("../../models/Notification")
 const admin = require("../firebase-admin/admin");
 
 let users = [];
@@ -73,7 +74,17 @@ exports.socketLogic = (io) => {
                                         },
                                     }
                                     await admin.messaging().send(notificationObject);
-                                    console.log(notificationObject)
+                                    const object = new Notification({
+                                        senderId,
+                                        senderName,
+                                        receiverId:user._id,
+                                        channelName:channel.channelName,
+                                        message:msg.text,
+                                        notificationType: "mention"
+                                    })
+                                    await object.save();
+                                    console.log("All tokens:", token);
+                                    console.log(object)
                                 } catch (err) {
                                     console.log("Mention FCM error for token:", token, err.message);
                                 }
@@ -94,7 +105,17 @@ exports.socketLogic = (io) => {
                                         },
                                     }
                                     await admin.messaging().send(notificationObject);
-                                    console.log(notificationObject)
+                                    const object = new Notification({
+                                        senderId,
+                                        senderName,
+                                        receiverId:user._id,
+                                        channelName:channel.channelName,
+                                        message:msg.text,
+                                        notificationType: "message"
+                                    })
+                                    await object.save();
+                                    console.log("All tokens:", token);
+                                    console.log(object)
 
                                 } catch (err) {
                                     console.log("FCM error for token:", token, err.message);

@@ -18,6 +18,7 @@ const workSpaceRoute = require("./src/router/user-actions/workspace-routes/workS
 const inviteRoute = require("./src/router/user-actions/workspace-routes/inviteRoute");
 const messageRoute = require("./src/router/user-actions/workspace-routes/messageRouter");
 const profileRoute = require("./src/router/user-actions/profilespace-routes/profileRouter");
+const notificationRoute = require("./src/router/user-actions/workspace-routes/notificationRouter")
 // Server ping check route
 const pingRoute = require("./src/router/pingRoute");
 // Feedback route
@@ -31,6 +32,7 @@ app.use("/user", notesRoute);
 app.use("/", messageRoute);
 app.use("/user", channelRoute);
 app.use("/user", workSpaceRoute);
+app.use("/user", notificationRoute);
 app.use("/invite", inviteRoute);
 app.use("/", profileRoute);
 // Server ping endpoint
