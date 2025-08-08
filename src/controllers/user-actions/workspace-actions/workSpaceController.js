@@ -1,7 +1,6 @@
 const Workspace = require("../../../models/Workspace");
 const Channel = require("../../../models/Channel");
-const NodeCache = require("node-cache");
-const workspaceCache = new NodeCache({ stdTTL: 3600, checkperiod: 1600 });
+const cache = require("../../../utils/caching/workspaceCache")
 const asyncErrorHandler = require("../../../utils/error-handlers/AsyncErrorHandler");
 
 // WORKSPACE SECTION
@@ -10,8 +9,8 @@ exports.getWorkSpaces = asyncErrorHandler(async (req, res, next) => {
     const userId = req.user._id;
     const cacheKey = `workspaces:${userId}`;
 
-    if (workspaceCache.has(cacheKey)) {
-        const cached = JSON.parse(workspaceCache.get(cacheKey));
+    if (cache.has(cacheKey)) {
+        const cached = JSON.parse(cache.get(cacheKey));
         return res.status(200).json(cached);
     }
 
@@ -24,7 +23,7 @@ exports.getWorkSpaces = asyncErrorHandler(async (req, res, next) => {
             return res.status(404).json({ message: "No WorkSpaces found ! Create One " });
         }
 
-        workspaceCache.set(cacheKey, JSON.stringify(workspaces));
+        cache.set(cacheKey, JSON.stringify(workspaces));
         return res.status(200).json(workspaces);
     } catch (e) {
         console.log(e);
@@ -41,8 +40,8 @@ exports.getWorkSpaceById = asyncErrorHandler(async (req, res, next) => {
         return res.status(400).json({ message: "User ID not found" });
     }
 
-    if (workspaceCache.has(cacheKey)) {
-        const cached = JSON.parse(workspaceCache.get(cacheKey));
+    if (cache.has(cacheKey)) {
+        const cached = JSON.parse(cache.get(cacheKey));
         return res.status(200).json(cached);
     }
 
@@ -53,7 +52,7 @@ exports.getWorkSpaceById = asyncErrorHandler(async (req, res, next) => {
             return res.status(404).json({ message: "Workspace not Found" });
         }
 
-        workspaceCache.set(cacheKey, JSON.stringify(findSpace));
+        cache.set(cacheKey, JSON.stringify(findSpace));
         return res.status(200).json(findSpace);
     } catch (e) {
         console.log(e);
@@ -65,8 +64,8 @@ exports.getLatestSpace = asyncErrorHandler(async (req, res, next) => {
     const userId = req.user._id;
     const cacheKey = `latestWorkspace:${userId}`;
 
-    if (workspaceCache.has(cacheKey)) {
-        const cached = JSON.parse(workspaceCache.get(cacheKey));
+    if (cache.has(cacheKey)) {
+        const cached = JSON.parse(cache.get(cacheKey));
         return res.status(200).json(cached);
     }
 
@@ -79,7 +78,7 @@ exports.getLatestSpace = asyncErrorHandler(async (req, res, next) => {
             return res.status(404).json({ message: "No WorkSpace found for this user. Create one." });
         }
 
-        workspaceCache.set(cacheKey, JSON.stringify(latestWorkspace));
+        cache.set(cacheKey, JSON.stringify(latestWorkspace));
         return res.status(200).json(latestWorkspace);
     } catch (e) {
         console.log(e);
@@ -128,8 +127,8 @@ exports.createWorkSpace = asyncErrorHandler(async (req, res, next) => {
         });
 
         // Invalidate relevant cache
-        workspaceCache.del(`workspaces:${userId}`);
-        workspaceCache.del(`latestWorkspace:${userId}`);
+        cache.del(`workspaces:${userId}`);
+        cache.del(`latestWorkspace:${userId}`);
 
         await savedWorkspace.save();
 
@@ -163,9 +162,9 @@ exports.updateWorkspace = asyncErrorHandler(async (req, res, next) => {
         );
 
         // Invalidate relevant cache
-        workspaceCache.del(`workspaces:${admin}`);
-        workspaceCache.del(`latestWorkspace:${admin}`);
-        workspaceCache.del(`workspaceById:${admin}:${_id}`);
+        cache.del(`workspaces:${admin}`);
+        cache.del(`latestWorkspace:${admin}`);
+        cache.del(`workspaceById:${admin}:${_id}`);
 
         return res.status(200).json({ message: 'Workspace name updated!', update });
     } catch (err) {
@@ -186,9 +185,9 @@ exports.deleteWorkspace = asyncErrorHandler(async (req, res, next) => {
         const deleteSpace = await Workspace.findByIdAndDelete({ _id, admin });
 
         // Invalidate relevant cache
-        workspaceCache.del(`workspaces:${admin}`);
-        workspaceCache.del(`latestWorkspace:${admin}`);
-        workspaceCache.del(`workspaceById:${admin}:${_id}`);
+        cache.del(`workspaces:${admin}`);
+        cache.del(`latestWorkspace:${admin}`);
+        cache.del(`workspaceById:${admin}:${_id}`);
 
         return res.status(200).json({ message: "Workspace deleted", deleteSpace });
     } catch (err) {

@@ -1,12 +1,7 @@
 const Workspace   = require("../../../models/Workspace");
 const Channel     = require("../../../models/Channel");
-const NodeCache   = require("node-cache");
+const cache = require("../../../utils/caching/workspaceCache")
 const asyncErrorHandler = require("../../../utils/error-handlers/AsyncErrorHandler");
-
-const channelCache = new NodeCache({
-    stdTTL: 3600,    // cache entries live for 1 hour
-    checkperiod: 1600
-});
 
 function cloneDoc(doc) {
     return JSON.parse(JSON.stringify(doc));
@@ -25,8 +20,8 @@ exports.getChannels = asyncErrorHandler(async (req, res) => {
     const cacheKey = `channels:${userId}`;
     let channels;
 
-    if (channelCache.has(cacheKey)) {
-        channels = channelCache.get(cacheKey);
+    if (cache.has(cacheKey)) {
+        channels = cache.get(cacheKey);
     } else {
         channels = await Channel.find({
             $or: [
@@ -38,7 +33,7 @@ exports.getChannels = asyncErrorHandler(async (req, res) => {
             return res.status(404).json({ message: "No channels found! Create one." });
         }
         channels = cloneDoc(channels);
-        channelCache.set(cacheKey, channels);
+        cache.set(cacheKey, channels);
     }
 
     return res.status(200).json(channels);
@@ -55,15 +50,15 @@ exports.getChannelById = asyncErrorHandler(async (req, res) => {
     const cacheKey = `channelById:${userId}:${channelId}`;
     let channelDoc;
 
-    if (channelCache.has(cacheKey)) {
-        channelDoc = channelCache.get(cacheKey);
+    if (cache.has(cacheKey)) {
+        channelDoc = cache.get(cacheKey);
     } else {
         const found = await Channel.findById(channelId);
         if (!found) {
             return res.status(404).json({ message: "Channel not found" });
         }
         channelDoc = cloneDoc(found);
-        channelCache.set(cacheKey, channelDoc);
+        cache.set(cacheKey, channelDoc);
     }
 
     const isAdmin  = channelDoc.admin.toString() === userId;
@@ -87,8 +82,8 @@ exports.getLatestChannel = asyncErrorHandler(async (req, res) => {
     const cacheKey = `latestChannel:${userId}`;
     let latest;
 
-    if (channelCache.has(cacheKey)) {
-        latest = channelCache.get(cacheKey);
+    if (cache.has(cacheKey)) {
+        latest = cache.get(cacheKey);
     } else {
         latest = await Channel.find({
             $or: [
@@ -104,7 +99,7 @@ exports.getLatestChannel = asyncErrorHandler(async (req, res) => {
         }
 
         latest = cloneDoc(latest);
-        channelCache.set(cacheKey, latest);
+        cache.set(cacheKey, latest);
     }
 
     return res.status(200).json(latest);
@@ -142,12 +137,18 @@ exports.createChannel = asyncErrorHandler(async (req, res) => {
     await workspace.save();
 
     // invalidate caches
-    const affectedUsers = [userId, ...workspace.members.map(m => m.toString())];
+    const affectedUsers = [...new Set([userId, ...workspace.members.map(m => m.toString())])];
+
     affectedUsers.forEach(uid => {
-        channelCache.del(`channels:${uid}`);
-        channelCache.del(`latestChannel:${uid}`);
+        // 1. Invalidate all relevant CHANNEL caches for each user
+        cache.del(`channels:${uid}`);
+        cache.del(`latestChannel:${uid}`);
+
+        // 2. 🔥 Invalidate all relevant WORKSPACE caches for each user (The Fix)
+        workspaceCache.del(`workspaces:${uid}`);
+        workspaceCache.del(`latestWorkspace:${uid}`);
+        workspaceCache.del(`workspaceById:${uid}:${workspaceId}`);
     });
-    channelCache.del(`channelById:${userId}:${newChannel._id.toString()}`);
 
     return res.status(201).json({ message: "Channel Created", newChannel });
 });
@@ -174,9 +175,9 @@ exports.updateChannel = asyncErrorHandler(async (req, res) => {
     );
 
     // invalidate caches
-    channelCache.del(`channels:${userId}`);
-    channelCache.del(`latestChannel:${userId}`);
-    channelCache.del(`channelById:${userId}:${channelId}`);
+    cache.del(`channels:${userId}`);
+    cache.del(`latestChannel:${userId}`);
+    cache.del(`channelById:${userId}:${channelId}`);
 
     return res.status(200).json({ message: "Channel name updated!", result });
 });
@@ -195,9 +196,9 @@ exports.deleteChannel = asyncErrorHandler(async (req, res) => {
     const deleted = await Channel.findByIdAndDelete(channelId);
 
     // invalidate caches
-    channelCache.del(`channels:${userId}`);
-    channelCache.del(`latestChannel:${userId}`);
-    channelCache.del(`channelById:${userId}:${channelId}`);
+    cache.del(`channels:${userId}`);
+    cache.del(`latestChannel:${userId}`);
+    cache.del(`channelById:${userId}:${channelId}`);
 
     return res.status(200).json({ message: "Channel deleted", deleted });
 });
