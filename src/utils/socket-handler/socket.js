@@ -64,6 +64,15 @@ exports.socketLogic = (io) => {
                     for (const user of mentionedUsers) {
                         if (user.fcmTokens && user.fcmTokens.length > 0 && user._id.toString() !== senderId // avoid notifying sender
                         ) {
+                            const object = new Notification({
+                                senderId,
+                                senderName,
+                                receiverId:user._id,
+                                channelName:channel.channelName,
+                                message:msg.text,
+                                notificationType: "mention"
+                            })
+                            await object.save();
                             for (const token of user.fcmTokens) {
                                 try {
                                     const notificationObject = {
@@ -74,17 +83,6 @@ exports.socketLogic = (io) => {
                                         },
                                     }
                                     await admin.messaging().send(notificationObject);
-                                    const object = new Notification({
-                                        senderId,
-                                        senderName,
-                                        receiverId:user._id,
-                                        channelName:channel.channelName,
-                                        message:msg.text,
-                                        notificationType: "mention"
-                                    })
-                                    await object.save();
-                                    console.log("All tokens:", token);
-                                    console.log(object)
                                 } catch (err) {
                                     console.log("Mention FCM error for token:", token, err.message);
                                 }
@@ -95,6 +93,15 @@ exports.socketLogic = (io) => {
                     // Send FCM notifications
                     for (const user of recipients) {
                         if (user.fcmTokens && user.fcmTokens.length > 0) {
+                            const object = new Notification({
+                                senderId,
+                                senderName,
+                                receiverId:user._id,
+                                channelName:channel.channelName,
+                                message:msg.text,
+                                notificationType: "message"
+                            })
+                            await object.save();
                             for (const token of user.fcmTokens) {
                                 try {
                                     const notificationObject = {
@@ -105,18 +112,6 @@ exports.socketLogic = (io) => {
                                         },
                                     }
                                     await admin.messaging().send(notificationObject);
-                                    const object = new Notification({
-                                        senderId,
-                                        senderName,
-                                        receiverId:user._id,
-                                        channelName:channel.channelName,
-                                        message:msg.text,
-                                        notificationType: "message"
-                                    })
-                                    await object.save();
-                                    console.log("All tokens:", token);
-                                    console.log(object)
-
                                 } catch (err) {
                                     console.log("FCM error for token:", token, err.message);
                                 }
