@@ -142,8 +142,11 @@ exports.createChannel = asyncErrorHandler(async (req, res) => {
     await workspace.save();
 
     // invalidate caches
-    channelCache.del(`channels:${userId}`);
-    channelCache.del(`latestChannel:${userId}`);
+    const affectedUsers = [userId, ...workspace.members.map(m => m.toString())];
+    affectedUsers.forEach(uid => {
+        channelCache.del(`channels:${uid}`);
+        channelCache.del(`latestChannel:${uid}`);
+    });
     channelCache.del(`channelById:${userId}:${newChannel._id.toString()}`);
 
     return res.status(201).json({ message: "Channel Created", newChannel });
