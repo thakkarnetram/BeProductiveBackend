@@ -123,9 +123,10 @@ exports.createChannel = asyncErrorHandler(async (req, res) => {
         channelName,
         workspace: {
             _id: workspace._id,
-            workspaceName: workspace.workspaceName || workspace.workspace,
+            workspaceName: workspace.workspace,
         },
         admin: userId,
+        members: workspace.members,
     });
     await newChannel.save();
 
@@ -140,14 +141,11 @@ exports.createChannel = asyncErrorHandler(async (req, res) => {
     const affectedUsers = [...new Set([userId, ...workspace.members.map(m => m.toString())])];
 
     affectedUsers.forEach(uid => {
-        // 1. Invalidate all relevant CHANNEL caches for each user
         cache.del(`channels:${uid}`);
         cache.del(`latestChannel:${uid}`);
-
-        // 2. 🔥 Invalidate all relevant WORKSPACE caches for each user (The Fix)
-        workspaceCache.del(`workspaces:${uid}`);
-        workspaceCache.del(`latestWorkspace:${uid}`);
-        workspaceCache.del(`workspaceById:${uid}:${workspaceId}`);
+        cache.del(`workspaces:${uid}`);
+        cache.del(`latestWorkspace:${uid}`);
+        cache.del(`workspaceById:${uid}:${workspaceId}`);
     });
 
     return res.status(201).json({ message: "Channel Created", newChannel });

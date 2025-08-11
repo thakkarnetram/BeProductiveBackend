@@ -12,12 +12,7 @@ const workspaceSchema = new mongoose.Schema({
         type: String,
         ref: "users",
     },
-    members: [
-        {
-            type: String,
-            ref: "users",
-        },
-    ],
+    members: [String],
     channels: [
         {
             _id: {

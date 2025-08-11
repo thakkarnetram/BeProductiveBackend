@@ -5,17 +5,11 @@ const channelSchema = new mongoose.Schema({
     type: String,
     require: true,
   },
-  workspace: [
-    {
-      _id: {
-        type: String,
-        ref: "workspace",
-      },
-      workspaceName: {
-        type: String,
-      },
-    },
-  ],
+  // Changed because old wasn't needed as the relation is one to one and not one to many
+  workspace: {
+    _id: { type: String, ref: "Workspace" },
+    workspaceName: { type: String },
+  },
   admin: {
     type: String,
     ref: "users",
@@ -39,12 +33,7 @@ const channelSchema = new mongoose.Schema({
       },
     },
   ],
-  members: [
-    {
-      type: String,
-      ref: "users",
-    },
-  ],
+  members: [String],
   createdAt: {
     type: Date,
     default: Date.now,

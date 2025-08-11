@@ -54,7 +54,7 @@ exports.joinWorkspace = asyncErrorHandler(async (req, res, next) => {
     await workspace.save();
 
     // Find all channels associated with the workspace
-    const channels = await Channels.find({ workspace: workspaceId });
+    const channels = await Channels.find({ "workspace._id": workspaceId });
     // Add the user to the members of each channel
     for (const channel of channels) {
       if (!channel.members.includes(userId)) {
