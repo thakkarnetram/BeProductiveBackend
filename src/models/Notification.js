@@ -13,6 +13,10 @@ const notificationSchema = new mongoose.Schema({
         type:String,
         required:true
     },
+    channelId : {
+        type:String,
+        required:true
+    },
     message:{
         type:String,
         required:true

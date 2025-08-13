@@ -69,6 +69,7 @@ exports.socketLogic = (io) => {
                                 senderName,
                                 receiverId:user._id,
                                 channelName:channel.channelName,
+                                channelId:channel._id,
                                 message:msg.text,
                                 notificationType: "mention"
                             })
@@ -98,6 +99,7 @@ exports.socketLogic = (io) => {
                                 senderName,
                                 receiverId:user._id,
                                 channelName:channel.channelName,
+                                channelId:channel._id,
                                 message:msg.text,
                                 notificationType: "message"
                             })
