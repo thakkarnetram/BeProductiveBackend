@@ -2,6 +2,7 @@ const Invite = require("../../../models/Invite");
 const User = require("../../../models/User");
 const Workspace = require("../../../models/Workspace");
 const Channels = require("../../../models/Channel");
+const cache = require("../../../utils/caching/workspaceCache")
 const asyncErrorHandler = require("../../../utils/error-handlers/AsyncErrorHandler");
 
 // Endpoint
@@ -60,6 +61,15 @@ exports.joinWorkspace = asyncErrorHandler(async (req, res, next) => {
       if (!channel.members.includes(userId)) {
         channel.members.push(userId);
         await channel.save();
+      }
+    }
+    const allUserIds = new Set([...workspace.members, workspace.admin]);
+
+    for (const id of allUserIds) {
+      const cacheKey = `workspaces:${id}`;
+      if (cache.has(cacheKey)) {
+        cache.del(cacheKey);
+        console.log(`Cache invalidated for user: ${id}`);
       }
     }
 

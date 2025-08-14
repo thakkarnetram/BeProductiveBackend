@@ -43,26 +43,27 @@ exports.socketLogic = (io) => {
                 const senderName = senderUser?.name;
 
                 // Get channel members
-                const channel = await Channel.findById(msg.channel).populate({
-                    path: "members", model: "users", select: "_id fcmTokens"
-                });
+                const channel = await Channel.findById(msg.channel);
+                if (!channel) {
+                    return console.log("Channel not found");
+                }
 
                 /*here there are 2 conditions for sending notifications
                 * 1. If the user has @ mention only that notification / device would get the notification
                 * 2. If there's a normal message everyone gets the notification
                 * */
 
-                const recipients = channel.members.filter((user) => user._id.toString() !== senderId);
                 const mentionUsernames = [...msg.text.matchAll(/@(\w+)/g)].map(m => m[1]);
                 if (mentionUsernames.length > 0) {
                     // Find users with these usernames
                     const mentionedUsers = await User.find({
-                        username: {$in: mentionUsernames},
+                        username: { $in: mentionUsernames },
+                        _id: { $ne: senderId }
                     }).select("_id username fcmTokens");
 
                     // Send mention-specific notification
                     for (const user of mentionedUsers) {
-                        if (user.fcmTokens && user.fcmTokens.length > 0 && user._id.toString() !== senderId // avoid notifying sender
+                        if (user.fcmTokens && user.fcmTokens.length > 0 // avoid notifying sender
                         ) {
                             const object = new Notification({
                                 senderId,
@@ -75,6 +76,7 @@ exports.socketLogic = (io) => {
                             })
                             await object.save();
                             for (const token of user.fcmTokens) {
+
                                 try {
                                     const notificationObject = {
                                         token, notification: {
@@ -90,32 +92,40 @@ exports.socketLogic = (io) => {
                             }
                         }
                     }
-                } else if (recipients.length > 0) {
+                } else {
                     // Send FCM notifications
-                    for (const user of recipients) {
-                        if (user.fcmTokens && user.fcmTokens.length > 0) {
-                            const object = new Notification({
-                                senderId,
-                                senderName,
-                                receiverId:user._id,
-                                channelName:channel.channelName,
-                                channelId:channel._id,
-                                message:msg.text,
-                                notificationType: "message"
-                            })
-                            await object.save();
-                            for (const token of user.fcmTokens) {
-                                try {
-                                    const notificationObject = {
-                                        token, notification: {
-                                            title: `${senderName || 'New Message'} in ${channel.channelName}`, body: msg.text,
-                                        }, data: {
-                                            channelId: msg.channel,channelName : channel.channelName, sentBy: msg.sentBy,
-                                        },
+                    const allParticipantIds = [...new Set([...channel.members, channel.admin])];
+                    const recipientIds = allParticipantIds.filter(id => id !== senderId);
+                    if(recipientIds.length > 0) {
+                        const recipients = await User.find({
+                            '_id': { $in: recipientIds }
+                        }).select("fcmTokens");
+                        for (const user of recipients) {
+                            if (user.fcmTokens && user.fcmTokens.length > 0) {
+                                const object = new Notification({
+                                    senderId,
+                                    senderName,
+                                    receiverId:user._id,
+                                    channelName:channel.channelName,
+                                    channelId:channel._id,
+                                    message:msg.text,
+                                    notificationType: "message"
+                                })
+                                await object.save();
+                                for (const token of user.fcmTokens) {
+                                    console.log(token)
+                                    try {
+                                        const notificationObject = {
+                                            token, notification: {
+                                                title: `${senderName || 'New Message'} in ${channel.channelName}`, body: msg.text,
+                                            }, data: {
+                                                channelId: msg.channel,channelName : channel.channelName, sentBy: msg.sentBy,
+                                            },
+                                        }
+                                        await admin.messaging().send(notificationObject);
+                                    } catch (err) {
+                                        console.log("FCM error for token:", token, err.message);
                                     }
-                                    await admin.messaging().send(notificationObject);
-                                } catch (err) {
-                                    console.log("FCM error for token:", token, err.message);
                                 }
                             }
                         }

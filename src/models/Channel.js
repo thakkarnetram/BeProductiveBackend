@@ -5,7 +5,6 @@ const channelSchema = new mongoose.Schema({
     type: String,
     require: true,
   },
-  // Changed because old wasn't needed as the relation is one to one and not one to many
   workspace: {
     _id: { type: String, ref: "Workspace" },
     workspaceName: { type: String },
