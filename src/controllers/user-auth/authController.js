@@ -32,7 +32,7 @@ exports.signup = async (req, res) => {
         const {name, username, email, password} = req.body;
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const strongPasswordRegex =
-            /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
+            /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^A-Za-z\d]).{6,}$/;
         // Validation
         if (!name || !username || !email || !password) {
             return res.status(400).json({message: "ALL FIELDS ARE REQUIRED"});
@@ -224,7 +224,7 @@ exports.handlePasswordReset = async (req, res) => {
             return res.status(404).json({message: "Provide a valid password"});
         }
         const strongPasswordRegex =
-            /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
+            /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^A-Za-z\d]).{6,}$/;
         // Check if newPassword meets the strong password requirements
         if (!strongPasswordRegex.test(newPassword.trim())) {
             return res
