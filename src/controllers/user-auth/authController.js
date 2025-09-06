@@ -31,18 +31,11 @@ exports.signup = async (req, res) => {
     try {
         const {name, username, email, password} = req.body;
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        const strongPasswordRegex =
-            /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^A-Za-z\d]).{6,}$/;
         // Validation
         if (!name || !username || !email || !password) {
             return res.status(400).json({message: "ALL FIELDS ARE REQUIRED"});
         } else if (!emailRegex.test(email)) {
             return res.status(400).json({message: "EMAIL FORMAT IS INVALID"});
-        } else if (!strongPasswordRegex.test(password)) {
-            return res.status(400).json({
-                message:
-                    "Password must contain 6 characters: 1 Uppercase, 1 Number, 1 Special Char",
-            });
         }
         // Check if user already exists
         const existingUser = await User.findOne({email});
