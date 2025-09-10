@@ -216,14 +216,6 @@ exports.handlePasswordReset = async (req, res) => {
         if (!newPassword) {
             return res.status(404).json({message: "Provide a valid password"});
         }
-        const strongPasswordRegex =
-            /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^A-Za-z\d]).{6,}$/;
-        // Check if newPassword meets the strong password requirements
-        if (!strongPasswordRegex.test(newPassword.trim())) {
-            return res
-                .status(401)
-                .json({message: "Password must be 6 chars and meet requirements"});
-        }
         user.password = await bcrypt.hash(newPassword, 10);
         await user.save();
         // Redirect to a success page or display a success message
