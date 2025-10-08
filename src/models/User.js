@@ -39,8 +39,26 @@ const userSchema = new mongoose.Schema({
   ],
   fcmTokens: [
       { type: String }
-  ]
-
+  ],
+  plan:{
+    type:String,
+    enum:["free","pro"],
+    default:"free"
+  },
+  subscription:{
+    entitlement:{
+      type:String
+    },
+    productId:{
+      type:String
+    },
+    expiry:{
+      type:Date
+    },
+    lastSynced:{
+      type:Date
+    }
+  }
 });
 
 const User = mongoose.model("users", userSchema);
