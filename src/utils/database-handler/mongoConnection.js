@@ -12,7 +12,7 @@ async function connectToDB() {
     });
     console.log("Connected to DB ");
     updateChannelMessages();
-    updateUserSchema();
+    // updateUserSchema();
   } catch (err) {
     console.error("Error connecting to DB:", err);
   }
