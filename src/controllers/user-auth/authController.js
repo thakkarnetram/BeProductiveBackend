@@ -50,7 +50,7 @@ exports.signup = async (req, res) => {
             return res
                 .status(400)
                 .json({
-                    message: "Username already exixts , choose a different one ! ",
+                    message: "Username already exists , choose a different one ! ",
                 });
         }
         // Hash the password
