@@ -28,7 +28,7 @@ const workspaceSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
-});
+},{timestamps:true});
 
 const Workspace = mongoose.model("Workspace", workspaceSchema);
 module.exports = Workspace;

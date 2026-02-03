@@ -27,7 +27,7 @@ const inviteSchema = new mongoose.Schema({
     default: "pending",
   },
   createdAt: { type: Date, default: Date.now },
-});
+},{timestamps:true});
 
 const Invite = mongoose.model("Invite", inviteSchema);
 module.exports = Invite;
