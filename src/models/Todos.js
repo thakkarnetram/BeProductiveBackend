@@ -30,7 +30,7 @@ const todoSchema = new mongoose.Schema({
   // __v 32 is
   // Object-Document Mapper
   // to keep a track of doc when its updated and saved
-});
+},{timestamps:true});
 
 // Creating model
 const ToDo = mongoose.model('userToDos', todoSchema);

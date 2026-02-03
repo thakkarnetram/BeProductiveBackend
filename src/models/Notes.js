@@ -20,7 +20,7 @@ const noteSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-});
+},{timestamps:true});
 
 // Create the Note model
 const Note = mongoose.model('userNotes', noteSchema);

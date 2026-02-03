@@ -1,4 +1,4 @@
-const Feedback = require("../../../models/feedback");
+const Feedback = require("../../../models/Feedback");
 const asyncErrorHandler = require("../../../utils/error-handlers/AsyncErrorHandler");
 
 // FEEDBACK SECTION
