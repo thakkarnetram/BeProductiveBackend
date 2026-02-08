@@ -6,8 +6,13 @@ const util = require("util");
 const nodemailer = require("nodemailer");
 const sendEmails = require("../../utils/email-handler/emailSender");
 const {sign} = require("jsonwebtoken");
+const OtpModel = require("../../models/Otp");
 
 require("dotenv").config({path: `.env.${process.env.NODE_ENV}`});
+
+function generateOtp () {
+    return Math.floor(100000 + Math.random() * 900000).toString();
+}
 
 exports.signToken = (email) => {
     return jwt.sign(
@@ -31,6 +36,7 @@ exports.signup = async (req, res) => {
     try {
         const {name, username, email, password} = req.body;
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const otp = generateOtp();
         // Validation
         if (!name || !username || !email || !password) {
             return res.status(400).json({message: "ALL FIELDS ARE REQUIRED"});
@@ -63,10 +69,15 @@ exports.signup = async (req, res) => {
             password: hash,
         });
         await newUser.save();
+        const newOtp = new OtpModel({
+            otp:otp,
+            isUsed:false,
+        })
+        await newOtp.save();
         // Send verification email
-        await sendEmails.verifyEmail(email);
+        await sendEmails.sendOtp(email,otp);
         return res.status(201).json({
-            message: "User Created! Please check your email to verify.",
+            message: "User Created! Please enter email to verify.",
             user: newUser,
         });
     } catch (error) {
@@ -124,7 +135,11 @@ exports.login = async (req, res) => {
 
 exports.loginUsingOtp = async (req, res) => {
     try {
-        const {otp} = req.body;
+        const {otp,email} = req.body;
+        const user = await User.findOne({email})
+        if(!user) {
+            return res.status(404).json({message:"User not found"})
+        }
         if (!otp) {
             return res.status(403).json({message: "Please enter otp"})
         }
@@ -136,8 +151,10 @@ exports.loginUsingOtp = async (req, res) => {
             return res.status(403).json({message: "Otp already used"})
         }
         otpRecord.isUsed = true;
+        user.isEmailVerified = true;
         await otpRecord.save();
-        return res.status(200).json({message: "Otp verified successfully"})
+        const token = signToken(user.email);
+        return res.status(200).json({message: "Otp verified successfully",token})
     } catch (error) {
         return res.status(500).json({message: `Internal Server Error ${error}`})
     }

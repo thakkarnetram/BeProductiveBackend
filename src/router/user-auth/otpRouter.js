@@ -5,7 +5,7 @@ const otpLimiter = require('../../utils/rate-limiting/authRateLimiter')
 
 const router = express.Router();
 
-router.route('/otp').post(otpLimiter.requestingOtpLimiter, otpController.createOtpAndSend)
-router.route('/otp/login').post(otpLimiter.sendingOtpLimiter, authController.loginUsingOtp);
+router.route('/api/v1/otp').post(otpLimiter.requestingOtpLimiter, otpController.createOtpAndSend)
+router.route('/api/v1/otp/login').post(otpLimiter.sendingOtpLimiter, authController.loginUsingOtp);
 
 module.exports = router;
