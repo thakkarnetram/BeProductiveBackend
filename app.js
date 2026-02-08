@@ -25,7 +25,7 @@ const pingRoute = require("./src/router/pingRoute");
 const feedBackRoute = require("./src/router/user-actions/profilespace-routes/feedBackRouter");
 // Authentication & Authorization endpoints
 app.use("/auth", authRoute);
-app.use("/",otpRoute);
+app.use("/auth",otpRoute);
 // User based actions endpoint
 app.use("/user", todoRoute);
 app.use("/user", notesRoute);
