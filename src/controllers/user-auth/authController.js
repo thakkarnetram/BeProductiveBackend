@@ -165,7 +165,7 @@ exports.loginUsingOtp = async (req, res) => {
         user.isEmailVerified = true;
         await otpRecord.save();
         const token = signToken(user.email);
-        return res.status(200).json({message: "Otp verified successfully",token})
+        return res.status(200).json({message: "Otp verified successfully",token,user})
     } catch (error) {
         return res.status(500).json({message: `Internal Server Error ${error}`})
     }
