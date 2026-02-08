@@ -45,7 +45,7 @@ exports.signup = async (req, res) => {
         }
         // Check if user already exists
         const existingUser = await User.findOne({email});
-        if (existingUser) {
+        if (existingUser && existingUser.isEmailVerified) {
             return res
                 .status(400)
                 .json({message: "Email already exists, please login."});
@@ -58,6 +58,17 @@ exports.signup = async (req, res) => {
                 .json({
                     message: "Username already exists , choose a different one ! ",
                 });
+        }
+        if(existingUser && !existingUser.isEmailVerified) {
+            const otp = generateOtp();
+            await OtpModel.create({
+                otp,
+                isUsed: false,
+            });
+            await sendEmails.sendOtp(email, otp);
+            return res.status(200).json({
+                message: "Email not verified. OTP resent."
+            });
         }
         // Hash the password
         const hash = await bcrypt.hash(password, 10);
