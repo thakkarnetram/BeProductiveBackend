@@ -163,6 +163,7 @@ exports.loginUsingOtp = async (req, res) => {
         }
         otpRecord.isUsed = true;
         user.isEmailVerified = true;
+        await user.save();
         await otpRecord.save();
         const token = signToken(user.email);
         return res.status(200).json({message: "Otp verified successfully",token,user})
