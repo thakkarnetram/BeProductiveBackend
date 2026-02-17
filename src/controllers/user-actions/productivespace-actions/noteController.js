@@ -51,10 +51,12 @@ exports.getRecentNotes = asyncErrorHandler(async (req, res, next) => {
 exports.addNotes = asyncErrorHandler(async (req, res, next) => {
     const {title, description} = req.body;
     const email = req.user.email;
+    const userId = req.user._id;
     const newNote = new Note({
         title,
         description,
         email,
+        userId
     });
     noteCache.del(`recentNotes:${email}`);
     noteCache.del(`notes:${email}`);
@@ -68,19 +70,22 @@ exports.addNotes = asyncErrorHandler(async (req, res, next) => {
 exports.updateNotes = asyncErrorHandler(async (req, res, next) => {
     const _id = req.params._id;
     const email = req.user.email;
-    const updatedNote = req.body;
     // Check if the note with the given _id and email exists
     const note = await Note.findOne({_id, email});
     if (!note) {
         // If the note does not exist or the email doesn't match, return Unauthorized
         return res.status(401).json({message: "Unauthorized to update this"});
     }
-    // If the note exists and the email matches, perform the update
-    const options = {new: true};
-    const result = await Note.findByIdAndUpdate(_id, updatedNote, options);
+    if(req.body.title !== undefined) {
+        note.title = req.body.title;
+    }
+    if(req.body.description !== undefined) {
+        note.description = req.body.description;
+    }
+    await note.save();
     noteCache.del(`recentNotes:${email}`);
     noteCache.del(`notes:${email}`);
-    return res.status(200).json({message: `Note updated for ${email}`, result});
+    return res.status(200).json({message: `Note updated for ${email}`, note});
 });
 
 exports.deleteNotes = asyncErrorHandler(async (req, res, next) => {
