@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const shortid = require('shortid');
-const {encrypt} = require("../utils/encryption-handler/crypto");
+const {encrypt, decrypt} = require("../utils/encryption-handler/crypto");
 // schema
 const todoSchema = new mongoose.Schema({
   _id: {
@@ -75,7 +75,23 @@ todoSchema.pre("save",function (next){
   if(this.isModified("todoDescription") && this.todoDescription) {
     this.todoDescription = encrypt(this.todoDescription);
   }
+  next()
 })
+
+// for decryption
+todoSchema.methods.toJSON = function () {
+  const obj = this.toObject();
+
+  if(obj.todoTitle) {
+    obj.todoTitle = decrypt(obj.todoTitle);
+  }
+
+  if(obj.todoDescription) {
+    obj.todoDescription = decrypt(obj.todoDescription);
+  }
+
+  return obj;
+};
 
 // Creating model
 const ToDo = mongoose.model('userToDos', todoSchema);
