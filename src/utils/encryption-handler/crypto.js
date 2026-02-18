@@ -16,12 +16,21 @@ function encrypt(text) {
 }
 
 function decrypt(text) {
-    const [ivHex,encryptedText] = text.split(":");
-    const iv =Buffer.from(ivHex,"hex")
-    const decipher = crypto.createDecipheriv(algorithm,key,iv);
-    let decrypted = decipher.update(encryptedText,"hex","utf-8");
-    decrypted += decipher.final("utf-8")
-    return decrypted;
+    if (!text || typeof text !== "string") return text;
+    if (!text.includes(":")) return text;
+    const parts = text.split(":");
+    if (parts.length !== 2) return text;
+    const [ivHex, encryptedText] = parts;
+    if (!/^[0-9a-fA-F]{32}$/.test(ivHex)) return text;
+    try {
+        const iv = Buffer.from(ivHex, "hex");
+        const decipher = crypto.createDecipheriv(algorithm, key, iv);
+        let decrypted = decipher.update(encryptedText, "hex", "utf8");
+        decrypted += decipher.final("utf8");
+        return decrypted;
+    } catch (err) {
+        return text;
+    }
 }
 
 module.exports = {encrypt,decrypt}
