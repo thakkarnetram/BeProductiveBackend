@@ -10,6 +10,7 @@ const { initDBAndSocket } = require("./src/utils/database-handler/mongoConnectio
 // Error handlers
 const CustomError = require("./src/utils/error-handlers/customError");
 const GlobalError = require("./src/controllers/errorController");
+const {startCronReminder} = require("./src/utils/reminderScheduler/todoReminder");
 
 // Socket connection
 
@@ -26,6 +27,9 @@ socketLogic(io);
 
 // Mongo Connection & Io instance
 initDBAndSocket(io);
+
+// Node cron call
+startCronReminder()
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));

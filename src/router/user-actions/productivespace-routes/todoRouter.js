@@ -9,6 +9,9 @@ router
     .route("/api/v1/todos")
     .get(todoLimiter.getTodoLimit, authController.protect, todoController.getTodos);
 router
+    .route("/api/v1/today")
+    .get(todoLimiter.getTodoLimit, authController.protect, todoController.getTodaysTodos);
+router
     .route("/api/v1/todos/recents")
     .get(authController.protect, todoController.getRecentTodos);
 router

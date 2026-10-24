@@ -8,19 +8,43 @@ const todoCache = new NodeCache({
 
 
 //  TODOS SECTION
+exports.getTodaysTodos = asyncErrorHandler(async (req,res,next) => {
+    const userEmail = req.user.email;
+    const startOfDay = new Date();
+    startOfDay.setHours(0,0,0,0)
+    const endOfDay = new Date();
+    endOfDay.setHours(23,59,59,999)
+    try {
+        const todos = await ToDo.find({
+            email: userEmail,
+            remindAt: {
+                $ne: null,
+                $gte : startOfDay,
+                $lte : endOfDay
+            },
+            todoStatus: {$ne:'Completed'}
+        }).sort({priorityRank : 1,remindAt:1})
+        if(todos.length === 0 ) {
+            return res.status(404).json({message:"No tasks for today",todos:[]})
+        }
+        return res.status(200).json(todos.map(t => t.toJSON()))
+    } catch (err) {
+        return res.status(500).json({message: err})
+    }
+})
+
 exports.getTodos = asyncErrorHandler(async (req, res, next) => {
     const userEmail = req.user.email;
     try {
-        let todos;
-        todos = await ToDo.find({email: userEmail});
-        if (!todos) {
-            return res.status(404).json({message: "No Todos Found"});
+        const cacheKey = `todos:${userEmail}`;
+        if (todoCache.has(cacheKey)) {
+            return res.status(200).json(
+                JSON.parse(todoCache.get(cacheKey))
+            );
         }
-        if (todoCache.has(`todos:${userEmail}`)) {
-            todos = JSON.parse(todoCache.get(`todos:${userEmail}`));
-        } else {
-            todoCache.set(`todos:${userEmail}`, JSON.stringify(todos));
-        }
+        let todos = await ToDo.find({ email: userEmail }).sort({priorityRank:1,remindAt:1});
+        todos = todos.map(todo => todo.toJSON());
+        todoCache.set(cacheKey, JSON.stringify(todos));
         return res.status(200).json(todos);
     } catch (err) {
         console.error('Error in getTodos', err);
@@ -33,7 +57,7 @@ exports.getRecentTodos = asyncErrorHandler(async (req, res, next) => {
     try {
         let todos;
         todos = await ToDo.find({email: userEmail})
-            .sort({createdAt: -1})
+            .sort({priorityRank:1,remindAt:1})
             .limit(2);
         if (!todos) {
             return res.status(404).json({message: "No Todos Found"});
@@ -51,7 +75,7 @@ exports.getRecentTodos = asyncErrorHandler(async (req, res, next) => {
 });
 
 exports.addTodos = async (req, res, next) => {
-    const {todoTitle, todoDescription, todoPriority, todoStatus} = req.body;
+    const {todoTitle, todoDescription, remindAt, todoPriority, todoStatus} = req.body;
     const email = req.user.email;
     const userId = req.user._id;
     if (!todoTitle) {
@@ -60,6 +84,7 @@ exports.addTodos = async (req, res, next) => {
     const newTodo = new ToDo({
         todoTitle,
         todoDescription,
+        remindAt,
         todoPriority,
         todoStatus,
         email,
@@ -97,6 +122,7 @@ exports.updateTodos = asyncErrorHandler(async (req, res, next) => {
     }
     if(req.body.remindAt !== undefined) {
         todo.remindAt = req.body.remindAt;
+        todo.notificationId = null;
     }
     if(req.body.repeatFrequency !== undefined) {
         todo.repeatFrequency = req.body.repeatFrequency;

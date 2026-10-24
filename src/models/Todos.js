@@ -62,6 +62,10 @@ const todoSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  priorityRank:{
+    type:Number,
+    default:4,
+  }
   // __v 32 is
   // Object-Document Mapper
   // to keep a track of doc when its updated and saved
@@ -69,6 +73,17 @@ const todoSchema = new mongoose.Schema({
 
 // for encryption
 todoSchema.pre("save",function (next){
+  if (this.isModified("todoPriority")) {
+    const map = {
+      High: 1,
+      Medium: 2,
+      Low: 3,
+      None: 4,
+    };
+
+    const priority = this.todoPriority || "None";
+    this.priorityRank = map[priority] || 4;
+  }
   if(this.isModified("todoTitle") && this.todoTitle) {
     this.todoTitle = encrypt(this.todoTitle);
   }
@@ -92,6 +107,11 @@ todoSchema.methods.toJSON = function () {
 
   return obj;
 };
+
+todoSchema.index({
+  priorityRank: 1,
+  remindAt: 1
+});
 
 // Creating model
 const ToDo = mongoose.model('userToDos', todoSchema);
